@@ -8,7 +8,7 @@ namespace BTC
     {
         #region Private fields
 
-        private List<GameObject> m_Keys;
+        private List<Key> m_Keys;
         private VariablesWatcher m_VarWatcher;
 
         #endregion
@@ -37,7 +37,7 @@ namespace BTC
         [UsedImplicitly]
         private void Start()
         {
-            m_Keys = new List<GameObject>(NumKeys);
+            m_Keys = new List<Key>(NumKeys);
             m_VarWatcher = new VariablesWatcher(this);
             Build();
         }
@@ -47,7 +47,7 @@ namespace BTC
             // Destroy primitives
             foreach (var key in m_Keys)
             {
-                Destroy(key);
+                Destroy(key.gameObject);
             }
             m_Keys.Clear();
 
@@ -80,43 +80,26 @@ namespace BTC
 
             // Create keys
             var whiteNoteCount = 0;
-            tone = FirstKey.Tone;
+            var pitch = FirstKey;
             for (uint i = 0; i < NumKeys; ++i)
             {
-                m_Keys.Add(Tones.IsOnWhiteKeys(tone)
-                    ? CreateWhiteNote(whiteNoteCount++, totalLen)
-                    : CreateBlackNote(whiteNoteCount, totalLen));
-
-                tone = Tones.NextTone(tone);
+                if (Tones.IsOnWhiteKeys(pitch.Tone))
+                {
+                    var pos = Vector3.right *
+                              ((whiteNoteCount + 0.5f) * (WhiteKeyScale.x + GapWidth) - totalLen / 2);
+                    m_Keys.Add(Key.Create(pitch, WhiteKeyScale, pos, this));
+                    whiteNoteCount++;
+                }
+                else
+                {
+                    var pos = new Vector3(
+                        whiteNoteCount * (WhiteKeyScale.x + GapWidth) - totalLen / 2f,
+                        (BlackKeyScale.y - WhiteKeyScale.y) / 2,
+                        (WhiteKeyScale.z - BlackKeyScale.z) / 2);
+                    m_Keys.Add(Key.Create(pitch, BlackKeyScale, pos, this));
+                }
+                pitch = Pitches.NextPitch(pitch);
             }
-        }
-
-        private GameObject CreateWhiteNote(int i_Idx, float i_TotalLen)
-        {
-            var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            obj.GetComponent<MeshRenderer>().material.color = Color.white;
-            obj.transform.localScale = WhiteKeyScale;
-            var scale = obj.transform.localScale;
-            scale.x = WhiteKeyScale.x;
-            obj.transform.localScale = scale;
-            obj.transform.position = Vector3.right *
-                                     ((i_Idx + 0.5f) * (WhiteKeyScale.x + GapWidth) -
-                                      i_TotalLen / 2);
-            obj.transform.parent = transform;
-            return obj;
-        }
-
-        private GameObject CreateBlackNote(int i_Idx, float i_TotalLen)
-        {
-            var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            obj.GetComponent<MeshRenderer>().material.color = Color.black;
-            obj.transform.localScale = BlackKeyScale;
-            obj.transform.position = new Vector3(
-                i_Idx * (WhiteKeyScale.x + GapWidth) - i_TotalLen / 2f,
-                (BlackKeyScale.y - WhiteKeyScale.y) / 2,
-                (WhiteKeyScale.z - BlackKeyScale.z) / 2);
-            obj.transform.parent = transform;
-            return obj;
         }
 
         [UsedImplicitly]

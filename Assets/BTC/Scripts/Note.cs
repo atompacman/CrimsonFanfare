@@ -128,6 +128,11 @@ namespace BTC
             return Octave == i_Other.Octave && Tone == i_Other.Tone;
         }
 
+        public override string ToString()
+        {
+            return Tone + " " + Octave;
+        }
+
         #endregion
     }
 }
