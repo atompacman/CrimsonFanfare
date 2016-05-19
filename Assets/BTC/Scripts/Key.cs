@@ -5,6 +5,12 @@ namespace BTC
 {
     public abstract class Key : MonoBehaviour
     {
+        #region Private fields
+
+        private MidiInputListener m_InputListener;
+
+        #endregion
+
         #region Properties
 
         public Pitch Pitch { get; private set; }
@@ -31,6 +37,7 @@ namespace BTC
                 ? obj.AddComponent<WhiteKey>()
                 : (Key) obj.AddComponent<BlackKey>();
             key.Pitch = i_Pitch;
+            key.m_InputListener = i_KeyB.MidiListener;
             return key;
         }
 
@@ -41,10 +48,9 @@ namespace BTC
         [UsedImplicitly]
         private void Update()
         {
-            GetComponent<MeshRenderer>().material.color =
-                Input.GetKey(KeyCode.A + Pitch.Octave * 12 + (int) Pitch.Tone)
-                    ? Color.red
-                    : DefaultColor();
+            GetComponent<MeshRenderer>().material.color = m_InputListener.IsNotePressed(Pitch)
+                ? m_InputListener.GetNoteVelocity(Pitch) * Color.red
+                : DefaultColor();
         }
 
         #endregion

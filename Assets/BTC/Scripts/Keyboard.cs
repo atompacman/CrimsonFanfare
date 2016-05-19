@@ -2,13 +2,20 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
+// ReSharper disable UseNullPropagation
+
 namespace BTC
 {
     public sealed class Keyboard : MonoBehaviour
     {
         #region Private fields
 
+        // Used in Update() to prevent rebuilding the keyboard when a watched field is changed
+        // during build
+        private bool m_HadJustBeenBuilt;
+
         private List<Key> m_Keys;
+
         private VariablesWatcher m_VarWatcher;
 
         #endregion
@@ -17,6 +24,9 @@ namespace BTC
 
         [Watched]
         public Vector3 BlackKeyScale;
+
+        [Watched]
+        public string DeviceName;
 
         [Watched]
         public Pitch FirstKey;
@@ -32,6 +42,12 @@ namespace BTC
 
         #endregion
 
+        #region Properties
+
+        public MidiInputListener MidiListener { get; private set; }
+
+        #endregion
+
         #region Methods
 
         [UsedImplicitly]
@@ -44,6 +60,15 @@ namespace BTC
 
         private void Build()
         {
+            m_HadJustBeenBuilt = true;
+
+            // Create MIDI input listener
+            if (MidiListener != null)
+            {
+                MidiListener.Dispose();
+            }
+            MidiListener = new MidiInputListener(DeviceName, NumKeys, FirstKey);
+
             // Destroy primitives
             foreach (var key in m_Keys)
             {
@@ -106,13 +131,24 @@ namespace BTC
         private void Update()
         {
             // Rebuild keyboard only if a public variable changed
-            if (!m_VarWatcher.HasAnyVariableChanged())
+            if (m_VarWatcher.HasAnyVariableChanged() && !m_HadJustBeenBuilt)
             {
-                return;
+                Debug.Log("[BTC] Rebuilding keyboard map");
+                Build();
             }
+            else
+            {
+                m_HadJustBeenBuilt = false;
+            }
+        }
 
-            Debug.Log("[BTC] Rebuilding keyboard map");
-            Build();
+        [UsedImplicitly]
+        private void OnDestroy()
+        {
+            if (MidiListener != null)
+            {
+                MidiListener.Dispose();
+            }
         }
 
         #endregion
