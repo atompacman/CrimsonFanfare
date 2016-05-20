@@ -9,10 +9,10 @@ namespace BTC
 
         private readonly InputDevice m_Device;
 
-        private readonly int m_FirstKey;
+        private readonly int m_FirstKeyOnKeyboard;
 
-        private readonly bool[] m_NotePressed;
-        private readonly byte[] m_NoteVelocity;
+        private readonly bool[] m_KeyPressed;
+        private readonly byte[] m_HitVelocity;
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace BTC
 
             if (m_Device == null)
             {
-                // Log warning if device was not found
+                // Device was not found
                 Debug.LogWarning("Could not find MIDI controller \"" + i_DeviceName + "\"");
             }
             else
@@ -47,9 +47,9 @@ namespace BTC
                 m_Device.ChannelMessageReceived += OnChannelMessageReceived;
             }
 
-            m_NotePressed = new bool[i_NumKeys];
-            m_NoteVelocity = new byte[i_NumKeys];
-            m_FirstKey = ConvertPitch2Midi(i_FirstKey);
+            m_KeyPressed = new bool[i_NumKeys];
+            m_HitVelocity = new byte[i_NumKeys];
+            m_FirstKeyOnKeyboard = ConvertPitch2Midi(i_FirstKey);
         }
 
         #endregion
@@ -74,14 +74,14 @@ namespace BTC
 
         #region Methods
 
-        public bool IsNotePressed(Pitch i_Pitch)
+        public bool IsKeyPressed(Pitch i_Pitch)
         {
-            return m_NotePressed[ConvertPitch2Midi(i_Pitch) - m_FirstKey];
+            return m_KeyPressed[ConvertPitch2Midi(i_Pitch) - m_FirstKeyOnKeyboard];
         }
 
-        public float GetNoteVelocity(Pitch i_Pitch)
+        public float GetHitVelocity(Pitch i_Pitch)
         {
-            return m_NoteVelocity[ConvertPitch2Midi(i_Pitch) - m_FirstKey] / 127f;
+            return m_HitVelocity[ConvertPitch2Midi(i_Pitch) - m_FirstKeyOnKeyboard] / 127f;
         }
 
         public void Dispose()
@@ -105,9 +105,9 @@ namespace BTC
             }
 
             //Save note pressed state and velocity
-            var idx = msg.Data1 - m_FirstKey;
-            m_NoteVelocity[idx] = (byte) msg.Data2;
-            m_NotePressed[idx] = msg.Command == ChannelCommand.NoteOn;
+            var idx = msg.Data1 - m_FirstKeyOnKeyboard;
+            m_KeyPressed[idx] = msg.Command == ChannelCommand.NoteOn;
+            m_HitVelocity[idx] = (byte) msg.Data2;
         }
 
         #endregion
