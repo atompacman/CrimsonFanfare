@@ -49,15 +49,6 @@ namespace FXGuild.CrimFan.Audio.Midi
         
         #endregion
 
-        #region Static methods
-
-        protected static int ConvertPitch2Midi(Pitch i_Pitch)
-        {
-            return (i_Pitch.Octave + 3) * 12 + (int) i_Pitch.Tone;
-        }
-
-        #endregion
-
         #region Methods
 
         public abstract bool IsKeyHit(Pitch i_Pitch);

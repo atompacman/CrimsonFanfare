@@ -13,7 +13,7 @@ namespace FXGuild.CrimFan.Game.World
     {
         #region Private fields
 
-        private KeyboardConfig m_Config;
+        public KeyboardConfig Config { get; private set; }
         private List<Key> m_Keys;
         public MidiInputSource MidiListener { get; private set; }
 
@@ -24,7 +24,7 @@ namespace FXGuild.CrimFan.Game.World
         public static Keyboard Create(KeyboardConfig i_Config)
         {
             var kb = new GameObject("Keyboard").AddComponent<Keyboard>();
-            kb.m_Config = i_Config;
+            kb.Config = i_Config;
             return kb;
         }
 
@@ -32,18 +32,18 @@ namespace FXGuild.CrimFan.Game.World
         private void Start()
         {
             // Create MIDI input listener
-            MidiListener = MidiInputSource.Create(m_Config.DeviceName, m_Config.NumKeys, m_Config.FirstKey);
+            MidiListener = MidiInputSource.Create(Config.DeviceName, Config.NumKeys, Config.FirstKey);
 
             // First key must be white
-            if (!Tones.IsOnWhiteKeys(m_Config.FirstKey.Tone))
+            if (!Tones.IsOnWhiteKeys(Config.FirstKey.Tone))
             {
-                m_Config.FirstKey.Tone = Tones.NextTone(m_Config.FirstKey.Tone);
+                Config.FirstKey.Tone = Tones.NextTone(Config.FirstKey.Tone);
             }
 
             // Count number of white keys
-            var tone = m_Config.FirstKey.Tone;
+            var tone = Config.FirstKey.Tone;
             var numWhites = 0;
-            for (uint i = 0; i < m_Config.NumKeys; ++i)
+            for (uint i = 0; i < Config.NumKeys; ++i)
             {
                 if (Tones.IsOnWhiteKeys(tone))
                 {
@@ -55,17 +55,17 @@ namespace FXGuild.CrimFan.Game.World
             // Last key must be white
             if (!Tones.IsOnWhiteKeys(Tones.PreviousTone(tone)))
             {
-                --m_Config.NumKeys;
+                --Config.NumKeys;
             }
         
             // Compute total keyboard length
-            var totalLen = numWhites * (m_Config.WhiteKeyScale.x + m_Config.GapWidth) - m_Config.GapWidth;
+            var totalLen = numWhites * (Config.WhiteKeyScale.x + Config.GapWidth) - Config.GapWidth;
 
             // Create keys
-            m_Keys = new List<Key>(m_Config.NumKeys);
+            m_Keys = new List<Key>(Config.NumKeys);
             var whiteNoteCount = 0;
-            var pitch = m_Config.FirstKey;
-            for (uint i = 0; i < m_Config.NumKeys; ++i)
+            var pitch = Config.FirstKey;
+            for (uint i = 0; i < Config.NumKeys; ++i)
             {
                 Vector3 scale;
                 Vector3 pos;
@@ -73,17 +73,17 @@ namespace FXGuild.CrimFan.Game.World
                 if (Tones.IsOnWhiteKeys(pitch.Tone))
                 {
                     pos = Vector3.right * ((whiteNoteCount + 0.5f) * 
-                        (m_Config.WhiteKeyScale.x + m_Config.GapWidth) - totalLen / 2);
-                    scale = m_Config.WhiteKeyScale;
+                        (Config.WhiteKeyScale.x + Config.GapWidth) - totalLen / 2);
+                    scale = Config.WhiteKeyScale;
                     whiteNoteCount++;
                 }
                 else
                 {
                     pos = new Vector3(
-                        whiteNoteCount * (m_Config.WhiteKeyScale.x + m_Config.GapWidth) - totalLen / 2f,
-                        (m_Config.BlackKeyScale.y - m_Config.WhiteKeyScale.y) / 2,
-                        (m_Config.WhiteKeyScale.z - m_Config.BlackKeyScale.z) / 2);
-                    scale = m_Config.BlackKeyScale;
+                        whiteNoteCount * (Config.WhiteKeyScale.x + Config.GapWidth) - totalLen / 2f,
+                        (Config.BlackKeyScale.y - Config.WhiteKeyScale.y) / 2,
+                        (Config.WhiteKeyScale.z - Config.BlackKeyScale.z) / 2);
+                    scale = Config.BlackKeyScale;
                 }
 
                 m_Keys.Add(Key.Create(pitch, scale, pos, this));

@@ -1,4 +1,5 @@
 ﻿using FXGuild.CrimFan.Common;
+using UnityEngine;
 
 namespace FXGuild.CrimFan.Game
 {
@@ -12,12 +13,11 @@ namespace FXGuild.CrimFan.Game
 
         #region Constructors
 
-        public Team(HorizontalDir i_Side, int i_NumKeysOnKeyboard)
+        public Team(HorizontalDir i_Side, Color i_Color)
         {
             Side = i_Side;
-            TerritoryEnd = Side == HorizontalDir.LEFT
-                ? MIN_INIT_TERRITORY_SIZE
-                : i_NumKeysOnKeyboard - MIN_INIT_TERRITORY_SIZE - 1;
+            TerritorySize = MIN_INIT_TERRITORY_SIZE;
+            Color = i_Color;
         }
 
         #endregion
@@ -26,7 +26,9 @@ namespace FXGuild.CrimFan.Game
 
         public HorizontalDir Side { get; private set; }
 
-        public int TerritoryEnd { get; private set; }
+        public int TerritorySize { get; private set; }
+
+        public Color Color { get; private set; }
 
         #endregion
     }

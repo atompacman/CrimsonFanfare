@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace FXGuild.CrimFan.Game.World
 {
-    public abstract class Key : MonoBehaviour
+    public sealed class Key : MonoBehaviour
     {
         #region Nested types
 
@@ -27,15 +27,11 @@ namespace FXGuild.CrimFan.Game.World
             obj.transform.localScale = i_Scale;
             obj.transform.position = i_Pos;
             obj.transform.parent = i_Keyboard.transform;
-            var key = Tones.IsOnWhiteKeys(i_Pitch.Tone)
-                ? obj.AddComponent<WhiteKey>()
-                : (Key)obj.AddComponent<BlackKey>();
+            var key = obj.AddComponent<Key>();
             key.m_InputSrc = i_Keyboard.MidiListener;
             key.Pitch = i_Pitch;
             return key;
         }
-
-        protected abstract Color DefaultColor();
 
         #endregion
 
@@ -51,34 +47,33 @@ namespace FXGuild.CrimFan.Game.World
                 NoteSoldier.Create(HorizontalDir.RIGHT, pos);
             }
 
-            // Set key color according to velocity
-            GetComponent<MeshRenderer>().material.color = m_InputSrc.IsKeyPressed(Pitch)
-                ? m_InputSrc.GetHitVelocity(Pitch) * Color.red
-                : DefaultColor();
-        }
+            // Set key color
+            Color color;
+            if (m_InputSrc.IsKeyPressed(Pitch))
+            {
+                color = Color.red * m_InputSrc.GetHitVelocity(Pitch);
+            }
+            else
+            {
+                var ownership = Match.CurrentMatch.GetKeyOwnership(Pitch);
 
-        #endregion
-    }
+                if (ownership == Match.KeyOwnership.Neutral)
+                {
+                    color = Tones.IsOnWhiteKeys(Pitch.Tone) ? Color.white : Color.black;
+                }
+                else
+                {
+                    color = ownership == Match.KeyOwnership.TeamLeft 
+                        ? Match.CurrentMatch.TeamLeft.Color
+                        : Match.CurrentMatch.TeamRight.Color;
+                    if (!Tones.IsOnWhiteKeys(Pitch.Tone))
+                    {
+                        color /= 4;
+                    }
+                }
+            }
 
-    public sealed class WhiteKey : Key
-    {
-        #region Methods
-
-        protected override Color DefaultColor()
-        {
-            return Color.white;
-        }
-
-        #endregion
-    }
-
-    public sealed class BlackKey : Key
-    {
-        #region Methods
-
-        protected override Color DefaultColor()
-        {
-            return Color.black;
+            GetComponent<MeshRenderer>().material.color = color;
         }
 
         #endregion

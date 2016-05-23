@@ -98,9 +98,14 @@ namespace FXGuild.CrimFan.Audio
 
         #region Methods
 
+        public int ToMidi()
+        {
+            return (Octave + 3) * 12 + (int) Tone;
+        }
+
         public override int GetHashCode()
         {
-            return (Octave * 397) ^ (int) Tone;
+            return ToMidi();
         }
         
         public override bool Equals(object i_Other)

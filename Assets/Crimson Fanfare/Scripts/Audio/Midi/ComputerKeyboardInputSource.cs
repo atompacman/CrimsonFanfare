@@ -34,7 +34,7 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         private bool CheckKeyState(Pitch i_Pitch, Func<string, bool> i_InputMethod)
         {
-            var relativeKey = ConvertPitch2Midi(i_Pitch) - ConvertPitch2Midi(FirstKey);
+            var relativeKey = i_Pitch.ToMidi() - FirstKey.ToMidi();
 
             // Piano keyboard cannot be mapped on the computer keyboard
             if (relativeKey >= Mathf.Min(m_NumKeys, 26))

@@ -57,12 +57,12 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         private bool CheckKeyState(Pitch i_Pitch, ButtonState i_State)
         {
-            return m_KeyStates[ConvertPitch2Midi(i_Pitch) - ConvertPitch2Midi(FirstKey)] == i_State;
+            return m_KeyStates[i_Pitch.ToMidi() - FirstKey.ToMidi()] == i_State;
         }
 
         public override float GetHitVelocity(Pitch i_Pitch)
         {
-            return m_HitVelocity[ConvertPitch2Midi(i_Pitch) - ConvertPitch2Midi(FirstKey)] / 127f;
+            return m_HitVelocity[i_Pitch.ToMidi() - FirstKey.ToMidi()] / 127f;
         }
 
         // @TODO clean me
@@ -87,7 +87,7 @@ namespace FXGuild.CrimFan.Audio.Midi
             }
 
             // Update binary pressed state and velocity
-            var idx = msg.Data1 - ConvertPitch2Midi(FirstKey);
+            var idx = msg.Data1 - FirstKey.ToMidi();
             m_KeyPressed[idx] = msg.Command == ChannelCommand.NoteOn;
             m_HitVelocity[idx] = (byte) msg.Data2;
         }
