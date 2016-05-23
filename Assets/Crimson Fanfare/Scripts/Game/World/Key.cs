@@ -1,31 +1,21 @@
-﻿using JetBrains.Annotations;
+﻿using FXGuild.CrimFan.Audio;
+using FXGuild.CrimFan.Audio.Midi;
+using FXGuild.CrimFan.Common;
+using FXGuild.CrimFan.Game.Pawn;
+using JetBrains.Annotations;
 using UnityEngine;
 
-namespace BTC
+namespace FXGuild.CrimFan.Game.World
 {
     public abstract class Key : MonoBehaviour
     {
         #region Nested types
 
-        private MidiInputListener m_InputListener;
+        private MidiInputSource m_InputSrc;
 
         public Pitch Pitch { get; private set; }
 
-        public ButtonState State { get; private set; }
-
-        public float Velocity { get; private set; }
-
-        public enum ButtonState
-        {
-            IDLE,
-            PRESSED,
-            HELD,
-            RELEASED
-        }
-
         #endregion
-
-
 
         #region Abstract methods
 
@@ -40,9 +30,8 @@ namespace BTC
             var key = Tones.IsOnWhiteKeys(i_Pitch.Tone)
                 ? obj.AddComponent<WhiteKey>()
                 : (Key)obj.AddComponent<BlackKey>();
+            key.m_InputSrc = i_Keyboard.MidiListener;
             key.Pitch = i_Pitch;
-            key.State = ButtonState.IDLE;
-            key.m_InputListener = i_Keyboard.MidiListener;
             return key;
         }
 
@@ -50,39 +39,22 @@ namespace BTC
 
         #endregion
 
-
-
         #region Methods
 
         [UsedImplicitly]
         private void Update()
         {
-            // Update button state and velocity
-            if (m_InputListener.IsKeyPressed(Pitch))
-            {
-                State = State == ButtonState.PRESSED || State == ButtonState.HELD
-                    ? ButtonState.HELD
-                    : ButtonState.PRESSED;
-                Velocity = m_InputListener.GetHitVelocity(Pitch);
-            }
-            else
-            {
-                State = State == ButtonState.RELEASED || State == ButtonState.IDLE
-                    ? ButtonState.IDLE
-                    : ButtonState.RELEASED;
-            }
-
             // Create a soldier the first frame the key is pressed
-            if (State == ButtonState.PRESSED)
+            if (m_InputSrc.IsKeyHit(Pitch))
             {
                 var pos = transform.position.x + transform.localScale.x * 1.5f;
-                NoteSoldier.Create(Direction.RIGHT, pos);
+                NoteSoldier.Create(HorizontalDir.RIGHT, pos);
             }
 
             // Set key color according to velocity
-            GetComponent<MeshRenderer>().material.color = State == ButtonState.IDLE
-                ? DefaultColor()
-                : Velocity * Color.red;
+            GetComponent<MeshRenderer>().material.color = m_InputSrc.IsKeyPressed(Pitch)
+                ? m_InputSrc.GetHitVelocity(Pitch) * Color.red
+                : DefaultColor();
         }
 
         #endregion

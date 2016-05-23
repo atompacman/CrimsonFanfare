@@ -1,8 +1,9 @@
-﻿using System;
+﻿using FXGuild.CrimFan.Common;
+using System;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace BTC
+namespace FXGuild.CrimFan.Audio
 {
     public enum Tone
     {
@@ -62,7 +63,7 @@ namespace BTC
     }
 
     [Serializable]
-    public sealed class Pitch : ICloneable
+    public sealed class Pitch
     {
         #region Public fields
 
@@ -85,47 +86,31 @@ namespace BTC
 
         public static bool operator ==(Pitch i_A, Pitch i_B)
         {
-            if (ReferenceEquals(i_A, i_B))
-            {
-                return true;
-            }
-            if (ReferenceEquals(i_A, null) || ReferenceEquals(i_B, null))
-            {
-                return false;
-            }
-            return i_A.Equals(i_B);
+            return Utils.OperatorEqualHelper(i_A, i_B);
         }
 
         public static bool operator !=(Pitch i_A, Pitch i_B)
         {
-            return !(i_A == i_B);
+            return Utils.OperatorNotEqualHelper(i_A, i_B);
         }
 
         #endregion
 
         #region Methods
 
-        public override bool Equals(object i_Obj)
-        {
-            return i_Obj is Pitch && Equals((Pitch) i_Obj);
-        }
-
         public override int GetHashCode()
         {
-            unchecked
+            return (Octave * 397) ^ (int) Tone;
+        }
+        
+        public override bool Equals(object i_Other)
+        {
+            if (!(i_Other is Pitch))
             {
-                return (Octave * 397) ^ (int) Tone;
+                return false;
             }
-        }
-
-        public object Clone()
-        {
-            return new Pitch(Tone, Octave);
-        }
-
-        private bool Equals(Pitch i_Other)
-        {
-            return Octave == i_Other.Octave && Tone == i_Other.Tone;
+            var o = (Pitch) i_Other;
+            return Octave == o.Octave && Tone == o.Tone;
         }
 
         public override string ToString()
