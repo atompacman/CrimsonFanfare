@@ -1,7 +1,5 @@
 ﻿using FXGuild.CrimFan.Audio;
 using FXGuild.CrimFan.Audio.Midi;
-using FXGuild.CrimFan.Common;
-using FXGuild.CrimFan.Game.Pawn;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -14,6 +12,8 @@ namespace FXGuild.CrimFan.Game.World
         private MidiInputSource m_InputSrc;
 
         public Pitch Pitch { get; private set; }
+
+        private Keyboard m_Keyboard;
 
         #endregion
 
@@ -30,6 +30,7 @@ namespace FXGuild.CrimFan.Game.World
             var key = obj.AddComponent<Key>();
             key.m_InputSrc = i_Keyboard.MidiListener;
             key.Pitch = i_Pitch;
+            key.m_Keyboard = i_Keyboard;
             return key;
         }
 
@@ -40,11 +41,13 @@ namespace FXGuild.CrimFan.Game.World
         [UsedImplicitly]
         private void Update()
         {
-            // Create a soldier the first frame the key is pressed
-            if (m_InputSrc.IsKeyHit(Pitch))
+            // Get team associated with this key
+            var team = m_Keyboard.CurrentMatch.GetTeam(Pitch);
+
+            // If the key belongs to a team, create a soldier the first frame the key is pressed
+            if (m_InputSrc.IsKeyHit(Pitch) && team != null)
             {
-                var pos = transform.position.x + transform.localScale.x * 1.5f;
-                NoteSoldier.Create(HorizontalDir.RIGHT, pos);
+                team.Army.AddSoldier(transform.position.x + transform.localScale.x * 1.5f);
             }
 
             // Set key color
@@ -55,20 +58,16 @@ namespace FXGuild.CrimFan.Game.World
             }
             else
             {
-                var ownership = Match.CurrentMatch.GetKeyOwnership(Pitch);
-
-                if (ownership == Match.KeyOwnership.Neutral)
+                if (team == null)
                 {
                     color = Tones.IsOnWhiteKeys(Pitch.Tone) ? Color.white : Color.black;
                 }
                 else
                 {
-                    color = ownership == Match.KeyOwnership.TeamLeft 
-                        ? Match.CurrentMatch.TeamLeft.Color
-                        : Match.CurrentMatch.TeamRight.Color;
+                    color = team.Color;
                     if (!Tones.IsOnWhiteKeys(Pitch.Tone))
                     {
-                        color /= 4;
+                        color *= 0.25f;
                     }
                 }
             }

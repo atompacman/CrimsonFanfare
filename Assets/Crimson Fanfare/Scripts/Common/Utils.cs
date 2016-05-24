@@ -30,6 +30,11 @@
             return !i_A.Equals(i_B);
         }
         
+        public static HorizontalDir OppositeDir(HorizontalDir i_Dir)
+        {
+            return (HorizontalDir)(((int) i_Dir + 1) % 2);
+        }
+
         #endregion
     }
 

@@ -16,15 +16,17 @@ namespace FXGuild.CrimFan.Game.World
         public KeyboardConfig Config { get; private set; }
         private List<Key> m_Keys;
         public MidiInputSource MidiListener { get; private set; }
+        public Match CurrentMatch { get; private set; }
 
         #endregion
 
         #region Methods
 
-        public static Keyboard Create(KeyboardConfig i_Config)
+        public static Keyboard Create(KeyboardConfig i_Config, Match i_Match)
         {
             var kb = new GameObject("Keyboard").AddComponent<Keyboard>();
             kb.Config = i_Config;
+            kb.CurrentMatch = i_Match;
             return kb;
         }
 

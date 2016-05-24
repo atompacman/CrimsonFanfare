@@ -9,6 +9,7 @@ namespace FXGuild.CrimFan.Game.Pawn
         private static readonly GameObject PREFAB;
 
         public HorizontalDir Direction { get; private set; }
+        public float Range { get; private set; }
 
         #region Methods
 
@@ -17,11 +18,12 @@ namespace FXGuild.CrimFan.Game.Pawn
             PREFAB = Resources.Load<GameObject>("Prefabs/NoteSoldier");
         }
 
-        public static NoteSoldier Create(HorizontalDir i_Direction, float i_Position)
+        public static NoteSoldier Create(HorizontalDir i_Direction, float i_Position, float i_Range)
         {
             var obj = Instantiate(PREFAB.gameObject);
             var soldier = obj.GetComponent<NoteSoldier>();
             soldier.Direction = i_Direction;
+            soldier.Range = i_Range;
             soldier.transform.position = Vector3.right * i_Position;
             return soldier;
         }

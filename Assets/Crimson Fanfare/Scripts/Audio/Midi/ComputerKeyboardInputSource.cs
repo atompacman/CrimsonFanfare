@@ -37,12 +37,16 @@ namespace FXGuild.CrimFan.Audio.Midi
             var relativeKey = i_Pitch.ToMidi() - FirstKey.ToMidi();
 
             // Piano keyboard cannot be mapped on the computer keyboard
-            if (relativeKey >= Mathf.Min(m_NumKeys, 26))
+            if (relativeKey < Mathf.Min(m_NumKeys, 13))
             {
-                return false;
+                return i_InputMethod(((char)(relativeKey + 'a')).ToString());
+            }
+            else if (relativeKey >= Mathf.Max(0, m_NumKeys - 13))
+            {
+                return i_InputMethod(((char)(relativeKey - (m_NumKeys - 26) + 'a')).ToString());
             }
 
-            return i_InputMethod(((char)(relativeKey + 'a')).ToString());
+            return false;
         }
 
         public override float GetHitVelocity(Pitch i_Pitch)

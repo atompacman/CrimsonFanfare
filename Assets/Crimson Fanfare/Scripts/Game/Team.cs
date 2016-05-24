@@ -10,19 +10,22 @@ namespace FXGuild.CrimFan.Game
         private const int MIN_INIT_TERRITORY_SIZE = 5;
 
         #endregion
-
+        
         #region Constructors
 
         public Team(HorizontalDir i_Side, Color i_Color)
         {
+            Army = new Army(i_Side);
             Side = i_Side;
             TerritorySize = MIN_INIT_TERRITORY_SIZE;
             Color = i_Color;
         }
-
+        
         #endregion
-
+        
         #region Properties
+
+        public Army Army { get; private set; }
 
         public HorizontalDir Side { get; private set; }
 
