@@ -6,17 +6,29 @@ namespace FXGuild.CrimFan.Game.Pawn
 {
     public sealed class NoteSoldier : MonoBehaviour
     {
+        #region Runtime constants
+
         private static readonly GameObject PREFAB;
 
-        public HorizontalDir Direction { get; private set; }
-        public float Range { get; private set; }
+        #endregion
 
-        #region Methods
+        #region Constructors
 
         static NoteSoldier()
         {
             PREFAB = Resources.Load<GameObject>("Prefabs/NoteSoldier");
         }
+
+        #endregion
+
+        #region Properties
+
+        public HorizontalDir Direction { get; private set; }
+        public float Range { get; private set; }
+
+        #endregion
+
+        #region Static methods
 
         public static NoteSoldier Create(HorizontalDir i_Direction, float i_Position, float i_Range)
         {
@@ -27,7 +39,11 @@ namespace FXGuild.CrimFan.Game.Pawn
             soldier.transform.position = Vector3.right * i_Position;
             return soldier;
         }
-    
+
+        #endregion
+
+        #region Methods
+
         [UsedImplicitly]
         private void Update()
         {

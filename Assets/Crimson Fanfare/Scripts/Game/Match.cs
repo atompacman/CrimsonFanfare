@@ -3,11 +3,14 @@ using FXGuild.CrimFan.Common;
 using FXGuild.CrimFan.Config;
 using FXGuild.CrimFan.Game.World;
 using UnityEngine;
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace FXGuild.CrimFan.Game
 {
     public sealed class Match
     {
+        #region Nested types
+
         public enum KeyOwnership
         {
             TEAM_LEFT,
@@ -15,11 +18,17 @@ namespace FXGuild.CrimFan.Game
             NEUTRAL
         }
 
-        private GameConfig m_Config;
-        private Keyboard m_Keyboard;
+        #endregion
 
-        public Team TeamLeft { get; private set; }
-        public Team TeamRight { get; private set; }
+        #region Private fields
+
+        private GameConfig m_Config;
+
+        private readonly Keyboard m_Keyboard;
+
+        #endregion
+
+        #region Constructors
 
         public Match(GameConfig i_Config)
         {
@@ -28,6 +37,18 @@ namespace FXGuild.CrimFan.Game
             TeamLeft = new Team(HorizontalDir.LEFT, Color.green);
             TeamRight = new Team(HorizontalDir.RIGHT, Color.blue);
         }
+
+        #endregion
+
+        #region Properties
+
+        public Team TeamLeft { get; private set; }
+
+        public Team TeamRight { get; private set; }
+
+        #endregion
+
+        #region Methods
 
         public void Stop()
         {
@@ -41,14 +62,11 @@ namespace FXGuild.CrimFan.Game
             {
                 return KeyOwnership.TEAM_LEFT;
             }
-            else if (idx >= m_Keyboard.Config.NumKeys - TeamRight.TerritorySize)
+            if (idx >= m_Keyboard.Config.NumKeys - TeamRight.TerritorySize)
             {
                 return KeyOwnership.TEAM_RIGHT;
             }
-            else
-            {
-                return KeyOwnership.NEUTRAL;
-            }
+            return KeyOwnership.NEUTRAL;
         }
 
         public Team GetTeam(HorizontalDir i_Side)
@@ -59,11 +77,13 @@ namespace FXGuild.CrimFan.Game
         public Team GetTeam(Pitch i_Key)
         {
             var ownership = GetKeyOwnership(i_Key);
-            return ownership == KeyOwnership.NEUTRAL 
-                ? null 
-                : ownership == KeyOwnership.TEAM_LEFT 
-                ? TeamLeft : 
-                TeamRight;
+            return ownership == KeyOwnership.NEUTRAL
+                ? null
+                : ownership == KeyOwnership.TEAM_LEFT
+                    ? TeamLeft
+                    : TeamRight;
         }
+
+        #endregion
     }
 }

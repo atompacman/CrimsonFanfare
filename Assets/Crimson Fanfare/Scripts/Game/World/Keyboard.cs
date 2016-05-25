@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+using FXGuild.CrimFan.Audio;
+using FXGuild.CrimFan.Audio.Midi;
+using FXGuild.CrimFan.Config;
 using JetBrains.Annotations;
 using UnityEngine;
-using FXGuild.CrimFan.Config;
-using FXGuild.CrimFan.Audio.Midi;
-using FXGuild.CrimFan.Audio;
 
 // ReSharper disable UseNullPropagation
 
@@ -13,14 +13,19 @@ namespace FXGuild.CrimFan.Game.World
     {
         #region Private fields
 
-        public KeyboardConfig Config { get; private set; }
         private List<Key> m_Keys;
+
+        #endregion
+
+        #region Properties
+
+        public KeyboardConfig Config { get; private set; }
         public MidiInputSource MidiListener { get; private set; }
         public Match CurrentMatch { get; private set; }
 
         #endregion
 
-        #region Methods
+        #region Static methods
 
         public static Keyboard Create(KeyboardConfig i_Config, Match i_Match)
         {
@@ -29,6 +34,10 @@ namespace FXGuild.CrimFan.Game.World
             kb.CurrentMatch = i_Match;
             return kb;
         }
+
+        #endregion
+
+        #region Methods
 
         [UsedImplicitly]
         private void Start()
@@ -59,7 +68,7 @@ namespace FXGuild.CrimFan.Game.World
             {
                 --Config.NumKeys;
             }
-        
+
             // Compute total keyboard length
             var totalLen = numWhites * (Config.WhiteKeyScale.x + Config.GapWidth) - Config.GapWidth;
 
@@ -74,8 +83,8 @@ namespace FXGuild.CrimFan.Game.World
 
                 if (Tones.IsOnWhiteKeys(pitch.Tone))
                 {
-                    pos = Vector3.right * ((whiteNoteCount + 0.5f) * 
-                        (Config.WhiteKeyScale.x + Config.GapWidth) - totalLen / 2);
+                    pos = Vector3.right * ((whiteNoteCount + 0.5f) *
+                                           (Config.WhiteKeyScale.x + Config.GapWidth) - totalLen / 2);
                     scale = Config.WhiteKeyScale;
                     whiteNoteCount++;
                 }
@@ -93,7 +102,7 @@ namespace FXGuild.CrimFan.Game.World
                 pitch = Pitches.NextPitch(pitch);
             }
         }
-        
+
         [UsedImplicitly]
         private void OnDestroy()
         {

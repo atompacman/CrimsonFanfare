@@ -1,6 +1,6 @@
-﻿using FXGuild.CrimFan.Audio;
+﻿using System;
+using FXGuild.CrimFan.Audio;
 using FXGuild.CrimFan.Common;
-using System;
 using UnityEngine;
 
 namespace FXGuild.CrimFan.Config
@@ -8,6 +8,8 @@ namespace FXGuild.CrimFan.Config
     [Serializable]
     public sealed class KeyboardConfig
     {
+        #region Public fields
+
         public Vector3 BlackKeyScale;
 
         public string DeviceName;
@@ -22,9 +24,12 @@ namespace FXGuild.CrimFan.Config
 
         public Vector3 WhiteKeyScale;
 
+        #endregion
+
+        #region Constructors
+
         public KeyboardConfig()
         {
-
         }
 
         public KeyboardConfig(KeyboardConfig i_ToCopy)
@@ -37,6 +42,10 @@ namespace FXGuild.CrimFan.Config
             WhiteKeyScale = i_ToCopy.WhiteKeyScale;
         }
 
+        #endregion
+
+        #region Static methods
+
         public static bool operator ==(KeyboardConfig i_A, KeyboardConfig i_B)
         {
             return Utils.OperatorEqualHelper(i_A, i_B);
@@ -46,13 +55,17 @@ namespace FXGuild.CrimFan.Config
         {
             return Utils.OperatorNotEqualHelper(i_A, i_B);
         }
-            
+
+        #endregion
+
+        #region Methods
+
         public override int GetHashCode()
         {
             // @TODO
             throw new NotImplementedException();
         }
-        
+
         public override bool Equals(object i_Other)
         {
             if (!(i_Other is KeyboardConfig))
@@ -60,12 +73,14 @@ namespace FXGuild.CrimFan.Config
                 return false;
             }
             var o = (KeyboardConfig) i_Other;
-            return BlackKeyScale == o.BlackKeyScale 
-                && DeviceName == o.DeviceName
-                && FirstKey == o.FirstKey
-                && GapWidth == o.GapWidth
-                && NumKeys == o.NumKeys
-                && WhiteKeyScale == o.WhiteKeyScale;
+            return BlackKeyScale == o.BlackKeyScale
+                   && DeviceName == o.DeviceName
+                   && FirstKey == o.FirstKey
+                   && Mathf.Approximately(GapWidth, o.GapWidth)
+                   && NumKeys == o.NumKeys
+                   && WhiteKeyScale == o.WhiteKeyScale;
         }
+
+        #endregion
     }
 }

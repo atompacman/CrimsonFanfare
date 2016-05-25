@@ -7,17 +7,21 @@ namespace FXGuild.CrimFan.Game.World
 {
     public sealed class Key : MonoBehaviour
     {
-        #region Nested types
+        #region Private fields
 
         private MidiInputSource m_InputSrc;
-
-        public Pitch Pitch { get; private set; }
 
         private Keyboard m_Keyboard;
 
         #endregion
 
-        #region Abstract methods
+        #region Properties
+
+        public Pitch Pitch { get; private set; }
+
+        #endregion
+
+        #region Static methods
 
         public static Key Create(Pitch i_Pitch, Vector3 i_Scale, Vector3 i_Pos, Keyboard i_Keyboard)
         {
@@ -45,6 +49,7 @@ namespace FXGuild.CrimFan.Game.World
             var team = m_Keyboard.CurrentMatch.GetTeam(Pitch);
 
             // If the key belongs to a team, create a soldier the first frame the key is pressed
+            // ReSharper disable once UseNullPropagation
             if (m_InputSrc.IsKeyHit(Pitch) && team != null)
             {
                 team.Army.AddSoldier(transform.position.x + transform.localScale.x * 1.5f);

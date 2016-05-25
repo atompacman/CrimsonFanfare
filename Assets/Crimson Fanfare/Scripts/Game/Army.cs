@@ -1,18 +1,19 @@
-﻿using FXGuild.CrimFan.Common;
+﻿using System.Collections.Generic;
+using FXGuild.CrimFan.Common;
 using FXGuild.CrimFan.Game.Pawn;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace FXGuild.CrimFan.Game
 {
     public sealed class Army
     {
+        #region Private fields
+
         private readonly List<NoteSoldier> m_Soldiers;
 
-        public float FrontLinePosition { get; private set; }
+        private readonly HorizontalDir m_Side;
 
-        public NoteSoldier FrontLineSoldier { get; private set; }
-
-        private HorizontalDir m_Side;
+        #endregion
 
         #region Constructors
 
@@ -24,12 +25,32 @@ namespace FXGuild.CrimFan.Game
             ResetFrontLine();
         }
 
+        #endregion
+
+        #region Properties
+
+        public float FrontLinePosition { get; private set; }
+
+        public NoteSoldier FrontLineSoldier { get; private set; }
+
+        #endregion
+
+        #region Methods
+
+        public void AddSoldier(float i_Pos)
+        {
+            m_Soldiers.Add(NoteSoldier.Create(Utils.OppositeDir(m_Side), i_Pos, 0.1f));
+        }
+
         private void ResetFrontLine()
         {
-            FrontLinePosition = m_Side == HorizontalDir.LEFT ? float.NegativeInfinity : float.PositiveInfinity;
+            FrontLinePosition = m_Side == HorizontalDir.LEFT
+                ? float.NegativeInfinity
+                : float.PositiveInfinity;
             FrontLineSoldier = null;
         }
 
+        [UsedImplicitly]
         private void Update()
         {
             // Update front line info
@@ -45,15 +66,6 @@ namespace FXGuild.CrimFan.Game
                 }
             }
         }
-
-        #endregion
-
-        public void AddSoldier(float i_Pos)
-        {
-            m_Soldiers.Add(NoteSoldier.Create(Utils.OppositeDir(m_Side), i_Pos, 0.1f));
-        }
-
-        #region Properties
 
         #endregion
     }

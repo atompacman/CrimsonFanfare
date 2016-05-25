@@ -5,13 +5,25 @@ namespace FXGuild.CrimFan.Audio.Midi
 {
     public abstract class MidiInputSource : MonoBehaviour
     {
-        #region Private fields
+        #region Properties
 
         protected Pitch FirstKey { get; private set; }
 
         #endregion
 
-        #region Constructors
+        #region Abstract methods
+
+        public abstract bool IsKeyHit(Pitch i_Pitch);
+
+        public abstract bool IsKeyReleased(Pitch i_Pitch);
+
+        public abstract bool IsKeyPressed(Pitch i_Pitch);
+
+        public abstract float GetHitVelocity(Pitch i_Pitch);
+
+        #endregion
+
+        #region Static methods
 
         public static MidiInputSource Create(string i_DeviceName, int i_NumKeys, Pitch i_FirstKey)
         {
@@ -33,7 +45,8 @@ namespace FXGuild.CrimFan.Audio.Midi
             MidiInputSource src;
             if (device == null)
             {
-                Debug.Log("Could not find MIDI controller \"" + i_DeviceName + "\". Using computer keyboard instead.");
+                Debug.Log("Could not find MIDI controller \"" + i_DeviceName +
+                          "\". Using computer keyboard instead.");
                 src = ComputerKeyboardInputSource.Create(i_NumKeys);
             }
             else
@@ -46,18 +59,6 @@ namespace FXGuild.CrimFan.Audio.Midi
 
             return src;
         }
-        
-        #endregion
-
-        #region Methods
-
-        public abstract bool IsKeyHit(Pitch i_Pitch);
-
-        public abstract bool IsKeyReleased(Pitch i_Pitch);
-
-        public abstract bool IsKeyPressed(Pitch i_Pitch);
-
-        public abstract float GetHitVelocity(Pitch i_Pitch);
 
         #endregion
     }

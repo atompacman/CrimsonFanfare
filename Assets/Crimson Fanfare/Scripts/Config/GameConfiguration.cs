@@ -1,14 +1,19 @@
-﻿using FXGuild.CrimFan.Common;
-using System;
+﻿using System;
+using FXGuild.CrimFan.Common;
 
 namespace FXGuild.CrimFan.Config
 {
     [Serializable]
     public sealed class GameConfig
     {
+        #region Public fields
+
         public KeyboardConfig KeyboardConfig;
 
-        
+        #endregion
+
+        #region Constructors
+
         public GameConfig()
         {
         }
@@ -17,6 +22,10 @@ namespace FXGuild.CrimFan.Config
         {
             KeyboardConfig = new KeyboardConfig(i_ToCopy.KeyboardConfig);
         }
+
+        #endregion
+
+        #region Static methods
 
         public static bool operator ==(GameConfig i_A, GameConfig i_B)
         {
@@ -27,7 +36,11 @@ namespace FXGuild.CrimFan.Config
         {
             return Utils.OperatorNotEqualHelper(i_A, i_B);
         }
-        
+
+        #endregion
+
+        #region Methods
+
         public override bool Equals(object i_Obj)
         {
             if (!(i_Obj is GameConfig))
@@ -44,5 +57,7 @@ namespace FXGuild.CrimFan.Config
             // @TODO
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

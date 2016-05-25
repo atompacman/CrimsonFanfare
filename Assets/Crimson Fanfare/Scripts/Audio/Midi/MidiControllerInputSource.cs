@@ -1,10 +1,13 @@
-﻿using Sanford.Multimedia.Midi;
+﻿using JetBrains.Annotations;
+using Sanford.Multimedia.Midi;
 using UnityEngine;
 
 namespace FXGuild.CrimFan.Audio.Midi
 {
     public sealed class MidiControllerInputSource : MidiInputSource
     {
+        #region Nested types
+
         private enum ButtonState
         {
             IDLE,
@@ -13,11 +16,32 @@ namespace FXGuild.CrimFan.Audio.Midi
             RELEASED
         }
 
+        #endregion
+
+        #region Private fields
+
         private InputDevice m_Device;
-        private ButtonState[] m_KeyStates;
-        private bool[] m_KeyPressed;
+
         private byte[] m_HitVelocity;
-        
+
+        private bool[] m_KeyPressed;
+
+        private ButtonState[] m_KeyStates;
+
+        #endregion
+
+        #region Destructors
+
+        // @TODO clean me
+        ~MidiControllerInputSource()
+        {
+            Dispose();
+        }
+
+        #endregion
+
+        #region Static methods
+
         public static MidiControllerInputSource Create(InputDevice i_Device, int i_NumKeys)
         {
             var src = new GameObject().AddComponent<MidiControllerInputSource>();
@@ -40,6 +64,10 @@ namespace FXGuild.CrimFan.Audio.Midi
             return src;
         }
 
+        #endregion
+
+        #region Methods
+
         public override bool IsKeyHit(Pitch i_Pitch)
         {
             return CheckKeyState(i_Pitch, ButtonState.HIT);
@@ -53,11 +81,6 @@ namespace FXGuild.CrimFan.Audio.Midi
         public override bool IsKeyPressed(Pitch i_Pitch)
         {
             return !CheckKeyState(i_Pitch, ButtonState.IDLE);
-        }
-
-        private bool CheckKeyState(Pitch i_Pitch, ButtonState i_State)
-        {
-            return m_KeyStates[i_Pitch.ToMidi() - FirstKey.ToMidi()] == i_State;
         }
 
         public override float GetHitVelocity(Pitch i_Pitch)
@@ -76,6 +99,11 @@ namespace FXGuild.CrimFan.Audio.Midi
             m_Device.Dispose();
         }
 
+        private bool CheckKeyState(Pitch i_Pitch, ButtonState i_State)
+        {
+            return m_KeyStates[i_Pitch.ToMidi() - FirstKey.ToMidi()] == i_State;
+        }
+
         private void OnChannelMessageReceived(object i_O, ChannelMessageEventArgs i_Args)
         {
             var msg = i_Args.Message;
@@ -91,30 +119,29 @@ namespace FXGuild.CrimFan.Audio.Midi
             m_KeyPressed[idx] = msg.Command == ChannelCommand.NoteOn;
             m_HitVelocity[idx] = (byte) msg.Data2;
         }
-        
+
+        [UsedImplicitly]
         private void Update()
         {
             for (var i = 0; i < m_KeyPressed.Length; ++i)
             {
                 if (m_KeyPressed[i])
                 {
-                    m_KeyStates[i] = m_KeyStates[i] == ButtonState.HIT || m_KeyStates[i] == ButtonState.HELD
+                    m_KeyStates[i] = m_KeyStates[i] == ButtonState.HIT ||
+                                     m_KeyStates[i] == ButtonState.HELD
                         ? ButtonState.HELD
                         : ButtonState.HIT;
                 }
                 else
                 {
-                    m_KeyStates[i] = m_KeyStates[i] == ButtonState.RELEASED || m_KeyStates[i] == ButtonState.IDLE
+                    m_KeyStates[i] = m_KeyStates[i] == ButtonState.RELEASED ||
+                                     m_KeyStates[i] == ButtonState.IDLE
                         ? ButtonState.IDLE
                         : ButtonState.RELEASED;
                 }
             }
         }
 
-        // @TODO clean me
-        ~MidiControllerInputSource()
-        {
-            Dispose();
-        }
+        #endregion
     }
 }

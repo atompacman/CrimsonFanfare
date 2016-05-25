@@ -1,5 +1,5 @@
-﻿using FXGuild.CrimFan.Common;
-using System;
+﻿using System;
+using FXGuild.CrimFan.Common;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
@@ -107,7 +107,7 @@ namespace FXGuild.CrimFan.Audio
         {
             return ToMidi();
         }
-        
+
         public override bool Equals(object i_Other)
         {
             if (!(i_Other is Pitch))

@@ -1,5 +1,11 @@
 ﻿namespace FXGuild.CrimFan.Common
 {
+    public enum HorizontalDir
+    {
+        LEFT,
+        RIGHT
+    }
+
     public static class Utils
     {
         #region Static methods
@@ -29,18 +35,12 @@
             }
             return !i_A.Equals(i_B);
         }
-        
+
         public static HorizontalDir OppositeDir(HorizontalDir i_Dir)
         {
-            return (HorizontalDir)(((int) i_Dir + 1) % 2);
+            return (HorizontalDir) (((int) i_Dir + 1) % 2);
         }
 
         #endregion
-    }
-
-    public enum HorizontalDir
-    {
-        LEFT,
-        RIGHT
     }
 }
