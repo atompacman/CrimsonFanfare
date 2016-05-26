@@ -30,16 +30,6 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         #endregion
 
-        #region Destructors
-
-        // @TODO clean me
-        ~MidiControllerInputSource()
-        {
-            Dispose();
-        }
-
-        #endregion
-
         #region Static methods
 
         public static MidiControllerInputSource Create(InputDevice i_Device, int i_NumKeys)
@@ -88,13 +78,9 @@ namespace FXGuild.CrimFan.Audio.Midi
             return m_HitVelocity[i_Pitch.ToMidi() - FirstKey.ToMidi()] / 127f;
         }
 
-        // @TODO clean me
-        public void Dispose()
+        [UsedImplicitly]
+        private void OnDestroy()
         {
-            if (m_Device == null || m_Device.IsDisposed)
-            {
-                return;
-            }
             m_Device.StopRecording();
             m_Device.Dispose();
         }
