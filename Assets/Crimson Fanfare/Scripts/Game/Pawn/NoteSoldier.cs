@@ -37,6 +37,15 @@ namespace FXGuild.CrimFan.Game.Pawn
             soldier.Direction = i_Direction;
             soldier.Range = i_Range;
             soldier.transform.position = Vector3.right * i_Position;
+
+            // Face good direction
+            if (i_Direction == HorizontalDir.LEFT)
+            {
+                var scale = soldier.transform.localScale;
+                scale.x *= -1;
+                soldier.transform.localScale = scale;
+            }
+
             return soldier;
         }
 
