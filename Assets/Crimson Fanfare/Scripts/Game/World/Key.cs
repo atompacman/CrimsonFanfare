@@ -23,7 +23,7 @@ namespace FXGuild.CrimFan.Game.World
 
         #region Static methods
 
-        public static Key Create(Pitch i_Pitch, Vector3 i_Scale, Vector3 i_Pos, Keyboard i_Keyboard)
+        public static Key CreateObject(Pitch i_Pitch, Vector3 i_Scale, Vector3 i_Pos, Keyboard i_Keyboard)
         {
             var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             obj.name = i_Pitch.ToString();

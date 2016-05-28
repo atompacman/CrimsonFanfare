@@ -19,10 +19,9 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         #region Static methods
 
-        public static ComputerKeyboardInputSource Create(int i_NumKeys)
+        public static ComputerKeyboardInputSource CreateComponent(int i_NumKeys, GameObject i_Parent)
         {
-            var obj = new GameObject();
-            var src = obj.AddComponent<ComputerKeyboardInputSource>();
+            var src = i_Parent.AddComponent<ComputerKeyboardInputSource>();
             src.m_NumKeys = i_NumKeys;
             return src;
         }

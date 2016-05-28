@@ -1,37 +1,43 @@
-﻿using System.Collections.Generic;
-using FXGuild.CrimFan.Common;
+﻿using FXGuild.CrimFan.Common;
 using FXGuild.CrimFan.Game.Pawn;
-using JetBrains.Annotations;
+using System.Collections.Generic;
+using UnityEngine;
+
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace FXGuild.CrimFan.Game
 {
-    public sealed class Army
+    public sealed class Army : MonoBehaviour
     {
         #region Private fields
 
-        private readonly List<NoteSoldier> m_Soldiers;
-
-        private readonly HorizontalDir m_Side;
-
-        #endregion
-
-        #region Constructors
-
-        public Army(HorizontalDir i_Side)
-        {
-            m_Soldiers = new List<NoteSoldier>();
-            m_Side = i_Side;
-
-            ResetFrontLine();
-        }
+        private List<NoteSoldier> m_Soldiers;
 
         #endregion
 
         #region Properties
 
-        public float FrontLinePosition { get; private set; }
+        public Team Team { get; private set; }
 
-        public NoteSoldier FrontLineSoldier { get; private set; }
+        public FrontLine FrontLine { get; private set; }
+
+        public HorizontalDir Side
+        {
+            get { return Team.Side; }
+        }
+
+        #endregion
+
+        #region Static methods
+
+        public static Army CreateComponent(Team i_Team)
+        {
+            var army = i_Team.gameObject.AddComponent<Army>();
+            army.m_Soldiers = new List<NoteSoldier>();
+            army.Team = i_Team;
+            army.FrontLine = FrontLine.Create(army);
+            return army;
+        }
 
         #endregion
 
@@ -39,32 +45,17 @@ namespace FXGuild.CrimFan.Game
 
         public void AddSoldier(float i_Pos)
         {
-            m_Soldiers.Add(NoteSoldier.Create(Utils.OppositeDir(m_Side), i_Pos, 0.1f));
+            m_Soldiers.Add(NoteSoldier.CreateObject(i_Pos, Random.value * 1f, this));
         }
 
-        private void ResetFrontLine()
+        public int GetNumSoldiers()
         {
-            FrontLinePosition = m_Side == HorizontalDir.LEFT
-                ? float.NegativeInfinity
-                : float.PositiveInfinity;
-            FrontLineSoldier = null;
+            return m_Soldiers.Count;
         }
 
-        [UsedImplicitly]
-        private void Update()
+        public IEnumerable<NoteSoldier> GetSoldiers()
         {
-            // Update front line info
-            ResetFrontLine();
-            foreach (var soldier in m_Soldiers)
-            {
-                var pos = soldier.transform.position.x;
-                if ((m_Side == HorizontalDir.LEFT && pos > FrontLinePosition)
-                    || (m_Side == HorizontalDir.RIGHT && pos < FrontLinePosition))
-                {
-                    FrontLinePosition = pos;
-                    FrontLineSoldier = soldier;
-                }
-            }
+            return m_Soldiers;
         }
 
         #endregion

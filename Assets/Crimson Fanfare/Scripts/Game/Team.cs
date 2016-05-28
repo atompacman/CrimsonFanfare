@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FXGuild.CrimFan.Game
 {
-    public sealed class Team
+    public sealed class Team : MonoBehaviour
     {
         #region Compile-time constants
 
@@ -13,12 +13,16 @@ namespace FXGuild.CrimFan.Game
 
         #region Constructors
 
-        public Team(HorizontalDir i_Side, Color i_Color)
+        public static Team CreateObject(HorizontalDir i_Side, Color i_Color, Match i_Match)
         {
-            Army = new Army(i_Side);
-            Side = i_Side;
-            TerritorySize = MIN_INIT_TERRITORY_SIZE;
-            Color = i_Color;
+            var team = new GameObject("Team " + i_Side).AddComponent<Team>();
+            team.transform.parent = i_Match.transform;
+            team.Side = i_Side;
+            team.TerritorySize = MIN_INIT_TERRITORY_SIZE;
+            team.Color = i_Color;
+            team.Match = i_Match;
+            team.Army = Army.CreateComponent(team);
+            return team;
         }
 
         #endregion
@@ -32,6 +36,8 @@ namespace FXGuild.CrimFan.Game
         public int TerritorySize { get; private set; }
 
         public Color Color { get; private set; }
+
+        public Match Match { get; private set; }
 
         #endregion
     }

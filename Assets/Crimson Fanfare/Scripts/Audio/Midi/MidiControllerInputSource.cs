@@ -32,9 +32,9 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         #region Static methods
 
-        public static MidiControllerInputSource Create(InputDevice i_Device, int i_NumKeys)
+        public static MidiControllerInputSource CreateComponent(InputDevice i_Device, int i_NumKeys, GameObject i_Parent)
         {
-            var src = new GameObject().AddComponent<MidiControllerInputSource>();
+            var src = i_Parent.AddComponent<MidiControllerInputSource>();
             src.m_Device = i_Device;
             src.m_KeyStates = new ButtonState[i_NumKeys];
             src.m_KeyPressed = new bool[i_NumKeys];

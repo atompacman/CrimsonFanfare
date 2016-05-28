@@ -25,7 +25,7 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         #region Static methods
 
-        public static MidiInputSource Create(string i_DeviceName, int i_NumKeys, Pitch i_FirstKey)
+        public static MidiInputSource CreateComponent(string i_DeviceName, int i_NumKeys, Pitch i_FirstKey, GameObject i_Parent)
         {
             // Look for a input device with the specified name
             InputDevice device = null;
@@ -47,11 +47,11 @@ namespace FXGuild.CrimFan.Audio.Midi
             {
                 Debug.Log("Could not find MIDI controller \"" + i_DeviceName +
                           "\". Using computer keyboard instead.");
-                src = ComputerKeyboardInputSource.Create(i_NumKeys);
+                src = ComputerKeyboardInputSource.CreateComponent(i_NumKeys, i_Parent);
             }
             else
             {
-                src = MidiControllerInputSource.Create(device, i_NumKeys);
+                src = MidiControllerInputSource.CreateComponent(device, i_NumKeys, i_Parent);
             }
 
             // Initialize common MidiInputSource members

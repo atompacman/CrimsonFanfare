@@ -6,6 +6,12 @@ namespace FXGuild.CrimFan.Game.Pawn
 {
     public sealed class NoteSoldier : MonoBehaviour
     {
+        public enum State
+        {
+            FIRING,
+            MOVING
+        }
+
         #region Runtime constants
 
         private static readonly GameObject PREFAB;
@@ -23,23 +29,28 @@ namespace FXGuild.CrimFan.Game.Pawn
 
         #region Properties
 
-        public HorizontalDir Direction { get; private set; }
+        public Army Army { get; private set; }
         public float Range { get; private set; }
+        public State CurrentState { get; private set; }
 
         #endregion
 
         #region Static methods
 
-        public static NoteSoldier Create(HorizontalDir i_Direction, float i_Position, float i_Range)
+        public static NoteSoldier CreateObject(float i_Position, float i_Range, Army i_Army)
         {
             var obj = Instantiate(PREFAB.gameObject);
+            obj.transform.parent = i_Army.transform;
             var soldier = obj.GetComponent<NoteSoldier>();
-            soldier.Direction = i_Direction;
+            soldier.Army = i_Army;
             soldier.Range = i_Range;
+            soldier.CurrentState = State.MOVING;
+
+            // Set initial position
             soldier.transform.position = Vector3.right * i_Position;
 
             // Face good direction
-            if (i_Direction == HorizontalDir.LEFT)
+            if (soldier.Army.Side == HorizontalDir.RIGHT)
             {
                 var scale = soldier.transform.localScale;
                 scale.x *= -1;
@@ -56,13 +67,22 @@ namespace FXGuild.CrimFan.Game.Pawn
         [UsedImplicitly]
         private void Update()
         {
-            if (Direction == HorizontalDir.LEFT)
+            var enemyArmy = Army.Team.Match.GetEnemyTeamOf(Army.Team).Army;
+            
+            if (enemyArmy.FrontLine.Exists && Mathf.Abs(enemyArmy.FrontLine.Position - transform.position.x) < Range)
             {
-                transform.position += Vector3.left * 0.01f;
+                CurrentState = State.FIRING;
             }
             else
             {
-                transform.position += Vector3.right * 0.01f;
+                if (Army.Side == HorizontalDir.RIGHT)
+                {
+                    transform.position += Vector3.left * 0.01f;
+                }
+                else
+                {
+                    transform.position += Vector3.right * 0.01f;
+                }
             }
         }
 

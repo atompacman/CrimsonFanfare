@@ -2,19 +2,23 @@
 using JetBrains.Annotations;
 using UnityEngine;
 
+// ReSharper disable once UseNullPropagation
+
 namespace FXGuild.CrimFan.Game
 {
-    public sealed class GameLauncher : MonoBehaviour
+    public sealed class GameDriver : MonoBehaviour
     {
         #region Private fields
-
-        private Match m_Match;
+        
         private GameConfig m_PrevConfig;
 
         #endregion
 
         #region Public fields
 
+        /// <summary>
+        /// Exposed in Unity inspector
+        /// </summary>
         public GameConfig Configuration;
 
         #endregion
@@ -24,18 +28,14 @@ namespace FXGuild.CrimFan.Game
         [UsedImplicitly]
         private void Update()
         {
+            // Do nothing if configuration has not changed
             if (Configuration == m_PrevConfig)
             {
                 return;
             }
 
-            // ReSharper disable once UseNullPropagation
-            if (m_Match != null)
-            {
-                m_Match.Stop();
-            }
-
-            m_Match = new Match(Configuration);
+            // Start new match
+            Match.CreateComponent(Configuration, gameObject);
             m_PrevConfig = new GameConfig(Configuration);
         }
 

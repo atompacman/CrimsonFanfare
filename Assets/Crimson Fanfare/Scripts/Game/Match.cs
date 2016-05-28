@@ -2,16 +2,16 @@
 using FXGuild.CrimFan.Common;
 using FXGuild.CrimFan.Config;
 using FXGuild.CrimFan.Game.World;
+using JetBrains.Annotations;
 using UnityEngine;
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
 namespace FXGuild.CrimFan.Game
 {
-    public sealed class Match
+    public sealed class Match : MonoBehaviour
     {
         #region Nested types
 
-        public enum KeyOwnership
+        public enum Ownership
         {
             TEAM_LEFT,
             TEAM_RIGHT,
@@ -22,21 +22,7 @@ namespace FXGuild.CrimFan.Game
 
         #region Private fields
 
-        private GameConfig m_Config;
-
-        private readonly Keyboard m_Keyboard;
-
-        #endregion
-
-        #region Constructors
-
-        public Match(GameConfig i_Config)
-        {
-            m_Config = i_Config;
-            m_Keyboard = Keyboard.Create(i_Config.KeyboardConfig, this);
-            TeamLeft = new Team(HorizontalDir.LEFT, Color.green);
-            TeamRight = new Team(HorizontalDir.RIGHT, Color.blue);
-        }
+        private Keyboard m_Keyboard;
 
         #endregion
 
@@ -48,25 +34,29 @@ namespace FXGuild.CrimFan.Game
 
         #endregion
 
-        #region Methods
+        #region Static methods
 
-        public void Stop()
+        public static Match CreateComponent(GameConfig i_Config, GameObject i_Parent)
         {
-            Object.Destroy(m_Keyboard.gameObject);
+            var match = i_Parent.AddComponent<Match>();
+            match.m_Keyboard = Keyboard.CreateObject(i_Config.KeyboardConfig, match);
+            match.TeamLeft = Team.CreateObject(HorizontalDir.LEFT, Color.green, match);
+            match.TeamRight = Team.CreateObject(HorizontalDir.RIGHT, Color.blue, match);
+            return match;
         }
 
-        public KeyOwnership GetKeyOwnership(Pitch i_Pitch)
+        #endregion
+
+        #region Methods
+
+        public Ownership GetKeyOwnership(Pitch i_Pitch)
         {
-            var idx = i_Pitch.ToMidi() - m_Keyboard.Config.FirstKey.ToMidi();
-            if (idx < TeamLeft.TerritorySize)
-            {
-                return KeyOwnership.TEAM_LEFT;
-            }
-            if (idx >= m_Keyboard.Config.NumKeys - TeamRight.TerritorySize)
-            {
-                return KeyOwnership.TEAM_RIGHT;
-            }
-            return KeyOwnership.NEUTRAL;
+            var idx = i_Pitch.ToMidi() - m_Keyboard.Configuration.FirstKey.ToMidi();
+            return idx < TeamLeft.TerritorySize
+                ? Ownership.TEAM_LEFT
+                : idx >= m_Keyboard.Configuration.NumKeys - TeamRight.TerritorySize
+                    ? Ownership.TEAM_RIGHT
+                    : Ownership.NEUTRAL;
         }
 
         public Team GetTeam(HorizontalDir i_Side)
@@ -74,14 +64,20 @@ namespace FXGuild.CrimFan.Game
             return i_Side == HorizontalDir.LEFT ? TeamLeft : TeamRight;
         }
 
+        [CanBeNull]
         public Team GetTeam(Pitch i_Key)
         {
             var ownership = GetKeyOwnership(i_Key);
-            return ownership == KeyOwnership.NEUTRAL
+            return ownership == Ownership.NEUTRAL
                 ? null
-                : ownership == KeyOwnership.TEAM_LEFT
+                : ownership == Ownership.TEAM_LEFT
                     ? TeamLeft
                     : TeamRight;
+        }
+
+        public Team GetEnemyTeamOf(Team i_Team)
+        {
+            return i_Team.Side == HorizontalDir.LEFT ? TeamRight : TeamLeft;
         }
 
         #endregion
