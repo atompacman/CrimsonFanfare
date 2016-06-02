@@ -7,6 +7,12 @@ namespace FXGuild.CrimFan.Game.World
 {
     public sealed class Key : MonoBehaviour
     {
+        #region Compile-time constants
+
+        private const float NOTE_SOLDIER_HEIGHT = 0.2f;
+
+        #endregion
+
         #region Private fields
 
         private MidiInputSource m_InputSrc;
@@ -23,7 +29,8 @@ namespace FXGuild.CrimFan.Game.World
 
         #region Static methods
 
-        public static Key CreateObject(Pitch i_Pitch, Vector3 i_Scale, Vector3 i_Pos, Keyboard i_Keyboard)
+        public static Key CreateObject(Pitch i_Pitch, Vector3 i_Scale, Vector3 i_Pos,
+            Keyboard i_Keyboard)
         {
             var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
             obj.name = i_Pitch.ToString();
@@ -52,7 +59,14 @@ namespace FXGuild.CrimFan.Game.World
             // ReSharper disable once UseNullPropagation
             if (m_InputSrc.IsKeyHit(Pitch) && team != null)
             {
-                team.Army.AddSoldier(transform.position.x + transform.localScale.x * 1.5f);
+                Debug.Assert(Tones.IsOnWhiteKeys(Pitch.Tone));
+
+                var kc = m_Keyboard.Configuration;
+                team.Army.AddSoldier(new Vector3(
+                    transform.position.x,
+                    NOTE_SOLDIER_HEIGHT,
+                    kc.WhiteKeyScale.z / 2 -
+                    Mathf.Lerp(kc.BlackKeyScale.z, kc.WhiteKeyScale.z, Random.value)));
             }
 
             // Set key color

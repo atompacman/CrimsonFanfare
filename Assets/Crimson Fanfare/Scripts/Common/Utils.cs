@@ -1,4 +1,6 @@
-﻿namespace FXGuild.CrimFan.Common
+﻿using UnityEngine;
+
+namespace FXGuild.CrimFan.Common
 {
     public enum HorizontalDir
     {
@@ -9,6 +11,11 @@
     public static class Utils
     {
         #region Static methods
+
+        public static GameObject LoadPrefab(string i_Name)
+        {
+            return Resources.Load<GameObject>("Prefabs/" + i_Name);
+        }
 
         public static bool OperatorEqualHelper<T>(T i_A, T i_B)
         {

@@ -26,6 +26,11 @@ namespace FXGuild.CrimFan.Game
             get { return Team.Side; }
         }
 
+        public Army EnemyArmy
+        {
+            get { return Team.Match.GetEnemyTeamOf(Team).Army; }
+        }
+
         #endregion
 
         #region Static methods
@@ -43,9 +48,15 @@ namespace FXGuild.CrimFan.Game
 
         #region Methods
 
-        public void AddSoldier(float i_Pos)
+        public void AddSoldier(Vector3 i_Pos)
         {
-            m_Soldiers.Add(NoteSoldier.CreateObject(i_Pos, Random.value * 1f, this));
+            m_Soldiers.Add(NoteSoldier.CreateObject(i_Pos, this));
+        }
+
+        public void RemoveSoldier(NoteSoldier i_NoteSoldier)
+        {
+            m_Soldiers.Remove(i_NoteSoldier);
+            Destroy(i_NoteSoldier.gameObject);
         }
 
         public int GetNumSoldiers()

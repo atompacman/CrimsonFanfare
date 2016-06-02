@@ -4,6 +4,8 @@ using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEngine;
 
+// ReSharper disable LoopCanBePartlyConvertedToQuery
+
 // ReSharper disable ConvertPropertyToExpressionBody
 
 namespace FXGuild.CrimFan.Game
