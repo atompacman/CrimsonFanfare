@@ -34,7 +34,7 @@ namespace FXGuild.CrimFan.Game.World
             kb.Configuration = i_Config;
             kb.CurrentMatch = i_Match;
 
-            // Create MIDI input listener
+            // CreateComponent MIDI input listener
             kb.MidiListener = MidiInputSource.CreateComponent(i_Config.DeviceName, i_Config.NumKeys, i_Config.FirstKey, kb.gameObject);
 
             // First key must be white

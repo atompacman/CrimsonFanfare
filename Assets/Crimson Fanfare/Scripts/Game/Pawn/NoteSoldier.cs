@@ -1,6 +1,9 @@
-﻿using FXGuild.CrimFan.Common;
+﻿using System.Collections.Generic;
+using FXGuild.CrimFan.Common;
 using JetBrains.Annotations;
 using UnityEngine;
+
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace FXGuild.CrimFan.Game.Pawn
 {
@@ -16,17 +19,15 @@ namespace FXGuild.CrimFan.Game.Pawn
 
         #endregion
 
-        #region Runtime constants
-
-        private static readonly GameObject PREFAB;
+        #region Compile-time constants
 
         private const string PREFAB_NAME = "NoteSoldier";
 
         #endregion
 
-        #region Private fields
+        #region Runtime constants
 
-        private float m_FiringStartTime;
+        private static readonly GameObject PREFAB;
 
         #endregion
 
@@ -49,6 +50,11 @@ namespace FXGuild.CrimFan.Game.Pawn
 
         public float Health { get; private set; }
 
+        public bool IsDead
+        {
+            get { return Mathf.Approximately(Health, 0); }
+        }
+
         public float FireRate { get; private set; }
 
         public State CurrentState { get; private set; }
@@ -63,7 +69,6 @@ namespace FXGuild.CrimFan.Game.Pawn
             obj.transform.parent = i_Army.transform;
             obj.transform.position = i_Position;
             var soldier = obj.GetComponent<NoteSoldier>();
-            soldier.m_FiringStartTime = 0;
             soldier.Army = i_Army;
             soldier.Range = Random.value * 1f;
             soldier.InitialHealth = Random.Range(2, 10);
@@ -79,7 +84,7 @@ namespace FXGuild.CrimFan.Game.Pawn
                 soldier.transform.localScale = scale;
             }
 
-            // Create health bar
+            // CreateComponent health bar
             HealthBar.CreateObject(obj);
 
             return soldier;
@@ -102,8 +107,7 @@ namespace FXGuild.CrimFan.Game.Pawn
             var efl = Army.EnemyArmy.FrontLine;
             if (efl.Exists && Mathf.Abs(efl.Position - transform.position.x) < Range)
             {
-                //UpdateFireState();
-                Health -= 0.1f;
+                UpdateFireState();
             }
             else
             {
@@ -111,19 +115,16 @@ namespace FXGuild.CrimFan.Game.Pawn
             }
         }
 
-        /*
         private void UpdateFireState()
         {
             CurrentState = State.FIRING;
-
-            if (Mathf.Approximately(m_FiringStartTime, 0))
+            var enemies = new List<NoteSoldier>(Army.EnemyArmy.FrontLine.Soldiers);
+            var enemy = enemies[Random.Range(0, enemies.Count)];
+            if (!enemy.IsDead)
             {
-                m_FiringStartTime = Time.fixedTime;
+                enemy.Health -= 0.03f;
             }
-
-            Army.EnemyArmy.FrontLine.Soldiers
         }
-        */
 
         private void UpdateMovingState()
         {
@@ -136,7 +137,6 @@ namespace FXGuild.CrimFan.Game.Pawn
             {
                 transform.position += Vector3.right * 0.01f;
             }
-            m_FiringStartTime = 0;
         }
 
         #endregion

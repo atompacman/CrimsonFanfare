@@ -38,7 +38,7 @@ namespace FXGuild.CrimFan.Game
 
         #region Static methods
 
-        public static FrontLine Create(Army i_Army)
+        public static FrontLine CreateComponent(Army i_Army)
         {
             var line = i_Army.gameObject.AddComponent<FrontLine>();
             line.Position = 0;
@@ -80,7 +80,7 @@ namespace FXGuild.CrimFan.Game
             // Update list of soldiers on front line
             foreach (var soldier in Army.GetSoldiers())
             {
-                if (Mathf.Abs(soldier.transform.position.x - Position) < 1e-3)
+                if (Mathf.Approximately(soldier.transform.position.x, Position))
                 {
                     m_SoldiersOnFront.Add(soldier);
                 }

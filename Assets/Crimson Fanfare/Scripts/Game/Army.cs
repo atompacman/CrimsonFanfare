@@ -40,7 +40,7 @@ namespace FXGuild.CrimFan.Game
             var army = i_Team.gameObject.AddComponent<Army>();
             army.m_Soldiers = new List<NoteSoldier>();
             army.Team = i_Team;
-            army.FrontLine = FrontLine.Create(army);
+            army.FrontLine = FrontLine.CreateComponent(army);
             return army;
         }
 
