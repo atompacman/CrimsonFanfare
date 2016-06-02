@@ -1,9 +1,9 @@
 ﻿using System;
-using FXGuild.CrimFan.Audio;
-using FXGuild.CrimFan.Common;
+using FXG.CrimFan.Audio;
+using FXG.CrimFan.Common;
 using UnityEngine;
 
-namespace FXGuild.CrimFan.Config
+namespace FXG.CrimFan.Config
 {
     [Serializable]
     public sealed class KeyboardConfig

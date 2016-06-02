@@ -1,11 +1,11 @@
-﻿using FXGuild.CrimFan.Common;
-using FXGuild.CrimFan.Game.Pawn;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using FXG.CrimFan.Common;
+using FXG.CrimFan.Pawn;
 using UnityEngine;
 
 // ReSharper disable ConvertPropertyToExpressionBody
 
-namespace FXGuild.CrimFan.Game
+namespace FXG.CrimFan.Core
 {
     public sealed class Army : MonoBehaviour
     {

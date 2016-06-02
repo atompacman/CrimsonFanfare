@@ -1,14 +1,14 @@
-﻿using FXGuild.CrimFan.Common;
-using FXGuild.CrimFan.Game.Pawn;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using System.Collections.Generic;
+using FXG.CrimFan.Common;
+using FXG.CrimFan.Pawn;
 using UnityEngine;
 
 // ReSharper disable LoopCanBePartlyConvertedToQuery
 
 // ReSharper disable ConvertPropertyToExpressionBody
 
-namespace FXGuild.CrimFan.Game
+namespace FXG.CrimFan.Core
 {
     public sealed class FrontLine : MonoBehaviour
     {

@@ -1,11 +1,11 @@
-﻿using FXGuild.CrimFan.Audio;
-using FXGuild.CrimFan.Common;
-using FXGuild.CrimFan.Config;
-using FXGuild.CrimFan.Game.World;
+﻿using FXG.CrimFan.Audio;
+using FXG.CrimFan.Common;
+using FXG.CrimFan.Config;
+using FXG.CrimFan.World;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace FXGuild.CrimFan.Game
+namespace FXG.CrimFan.Core
 {
     public sealed class Match : MonoBehaviour
     {

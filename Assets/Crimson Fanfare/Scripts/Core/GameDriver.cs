@@ -1,15 +1,15 @@
-﻿using FXGuild.CrimFan.Config;
+﻿using FXG.CrimFan.Config;
 using JetBrains.Annotations;
 using UnityEngine;
 
 // ReSharper disable once UseNullPropagation
 
-namespace FXGuild.CrimFan.Game
+namespace FXG.CrimFan.Core
 {
     public sealed class GameDriver : MonoBehaviour
     {
         #region Private fields
-        
+
         private GameConfig m_PrevConfig;
 
         #endregion
@@ -17,7 +17,7 @@ namespace FXGuild.CrimFan.Game
         #region Public fields
 
         /// <summary>
-        /// Exposed in Unity inspector
+        ///     Exposed in Unity inspector
         /// </summary>
         public GameConfig Configuration;
 

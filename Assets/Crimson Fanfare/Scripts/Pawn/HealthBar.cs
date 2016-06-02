@@ -1,8 +1,8 @@
-﻿using FXGuild.CrimFan.Common;
+﻿using FXG.CrimFan.Common;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace FXGuild.CrimFan.Game.Pawn
+namespace FXG.CrimFan.Pawn
 {
     public sealed class HealthBar : MonoBehaviour
     {

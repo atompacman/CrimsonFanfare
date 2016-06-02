@@ -1,7 +1,7 @@
 ﻿using Sanford.Multimedia.Midi;
 using UnityEngine;
 
-namespace FXGuild.CrimFan.Audio.Midi
+namespace FXG.CrimFan.Audio.Midi
 {
     public abstract class MidiInputSource : MonoBehaviour
     {
@@ -25,7 +25,8 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         #region Static methods
 
-        public static MidiInputSource CreateComponent(string i_DeviceName, int i_NumKeys, Pitch i_FirstKey, GameObject i_Parent)
+        public static MidiInputSource CreateComponent(string i_DeviceName, int i_NumKeys,
+            Pitch i_FirstKey, GameObject i_Parent)
         {
             // Look for a input device with the specified name
             InputDevice device = null;

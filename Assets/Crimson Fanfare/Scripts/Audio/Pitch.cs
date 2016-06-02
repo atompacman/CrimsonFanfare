@@ -1,9 +1,9 @@
 ﻿using System;
-using FXGuild.CrimFan.Common;
+using FXG.CrimFan.Common;
 
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
-namespace FXGuild.CrimFan.Audio
+namespace FXG.CrimFan.Audio
 {
     public enum Tone
     {

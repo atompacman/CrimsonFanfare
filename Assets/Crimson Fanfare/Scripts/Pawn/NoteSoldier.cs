@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
-using FXGuild.CrimFan.Common;
+using FXG.CrimFan.Common;
+using FXG.CrimFan.Core;
 using JetBrains.Annotations;
 using UnityEngine;
 
 // ReSharper disable ConvertPropertyToExpressionBody
 
-namespace FXGuild.CrimFan.Game.Pawn
+namespace FXG.CrimFan.Pawn
 {
     public sealed class NoteSoldier : MonoBehaviour
     {

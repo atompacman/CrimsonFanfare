@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace FXGuild.CrimFan.Common
+namespace FXG.CrimFan.Common
 {
     public enum HorizontalDir
     {

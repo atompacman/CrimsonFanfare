@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace FXGuild.CrimFan.Audio.Midi
+namespace FXG.CrimFan.Audio.Midi
 {
     public sealed class ComputerKeyboardInputSource : MidiInputSource
     {

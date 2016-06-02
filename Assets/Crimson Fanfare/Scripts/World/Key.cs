@@ -1,9 +1,9 @@
-﻿using FXGuild.CrimFan.Audio;
-using FXGuild.CrimFan.Audio.Midi;
+﻿using FXG.CrimFan.Audio;
+using FXG.CrimFan.Audio.Midi;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace FXGuild.CrimFan.Game.World
+namespace FXG.CrimFan.World
 {
     public sealed class Key : MonoBehaviour
     {

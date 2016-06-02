@@ -1,7 +1,7 @@
 ﻿using System;
-using FXGuild.CrimFan.Common;
+using FXG.CrimFan.Common;
 
-namespace FXGuild.CrimFan.Config
+namespace FXG.CrimFan.Config
 {
     [Serializable]
     public sealed class GameConfig

@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
-using FXGuild.CrimFan.Audio;
-using FXGuild.CrimFan.Audio.Midi;
-using FXGuild.CrimFan.Config;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using System.Collections.Generic;
+using FXG.CrimFan.Audio;
+using FXG.CrimFan.Audio.Midi;
+using FXG.CrimFan.Config;
+using FXG.CrimFan.Core;
 using UnityEngine;
 
 // ReSharper disable UseNullPropagation
 
-namespace FXGuild.CrimFan.Game.World
+namespace FXG.CrimFan.World
 {
     public sealed class Keyboard : MonoBehaviour
     {
@@ -35,7 +36,8 @@ namespace FXGuild.CrimFan.Game.World
             kb.CurrentMatch = i_Match;
 
             // CreateComponent MIDI input listener
-            kb.MidiListener = MidiInputSource.CreateComponent(i_Config.DeviceName, i_Config.NumKeys, i_Config.FirstKey, kb.gameObject);
+            kb.MidiListener = MidiInputSource.CreateComponent(i_Config.DeviceName, i_Config.NumKeys,
+                i_Config.FirstKey, kb.gameObject);
 
             // First key must be white
             if (!Tones.IsOnWhiteKeys(i_Config.FirstKey.Tone))
@@ -62,7 +64,8 @@ namespace FXGuild.CrimFan.Game.World
             }
 
             // Compute total keyboard length
-            var totalLen = numWhites * (i_Config.WhiteKeyScale.x + i_Config.GapWidth) - i_Config.GapWidth;
+            var totalLen = numWhites * (i_Config.WhiteKeyScale.x + i_Config.GapWidth) -
+                           i_Config.GapWidth;
 
             // CreateObject keys
             kb.m_Keys = new List<Key>(i_Config.NumKeys);
@@ -76,14 +79,16 @@ namespace FXGuild.CrimFan.Game.World
                 if (Tones.IsOnWhiteKeys(pitch.Tone))
                 {
                     pos = Vector3.right * ((whiteNoteCount + 0.5f) *
-                                           (i_Config.WhiteKeyScale.x + i_Config.GapWidth) - totalLen / 2);
+                                           (i_Config.WhiteKeyScale.x + i_Config.GapWidth) -
+                                           totalLen / 2);
                     scale = i_Config.WhiteKeyScale;
                     whiteNoteCount++;
                 }
                 else
                 {
                     pos = new Vector3(
-                        whiteNoteCount * (i_Config.WhiteKeyScale.x + i_Config.GapWidth) - totalLen / 2f,
+                        whiteNoteCount * (i_Config.WhiteKeyScale.x + i_Config.GapWidth) -
+                        totalLen / 2f,
                         (i_Config.BlackKeyScale.y - i_Config.WhiteKeyScale.y) / 2,
                         (i_Config.WhiteKeyScale.z - i_Config.BlackKeyScale.z) / 2);
                     scale = i_Config.BlackKeyScale;
@@ -96,6 +101,10 @@ namespace FXGuild.CrimFan.Game.World
 
             return kb;
         }
+
+        #endregion
+
+        #region Methods
 
         [UsedImplicitly]
         private void OnDestroy()

@@ -2,7 +2,7 @@
 using Sanford.Multimedia.Midi;
 using UnityEngine;
 
-namespace FXGuild.CrimFan.Audio.Midi
+namespace FXG.CrimFan.Audio.Midi
 {
     public sealed class MidiControllerInputSource : MidiInputSource
     {
@@ -32,7 +32,8 @@ namespace FXGuild.CrimFan.Audio.Midi
 
         #region Static methods
 
-        public static MidiControllerInputSource CreateComponent(InputDevice i_Device, int i_NumKeys, GameObject i_Parent)
+        public static MidiControllerInputSource CreateComponent(InputDevice i_Device, int i_NumKeys,
+            GameObject i_Parent)
         {
             var src = i_Parent.AddComponent<MidiControllerInputSource>();
             src.m_Device = i_Device;
