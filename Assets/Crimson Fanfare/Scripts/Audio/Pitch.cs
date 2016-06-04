@@ -1,6 +1,8 @@
 ﻿using System;
 using FXG.CrimFan.Common;
 
+// ReSharper disable ConvertPropertyToExpressionBody
+
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
 namespace FXG.CrimFan.Audio
@@ -78,6 +80,15 @@ namespace FXG.CrimFan.Audio
         {
             Tone = i_Tone;
             Octave = i_Octave;
+        }
+
+        #endregion
+
+        #region Properties
+
+        public bool IsOnWhiteKeys
+        {
+            get { return Tones.IsOnWhiteKeys(Tone); }
         }
 
         #endregion

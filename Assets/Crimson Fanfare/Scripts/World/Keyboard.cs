@@ -2,6 +2,8 @@
 using FXG.CrimFan.Audio.Midi;
 using FXG.CrimFan.Config;
 using FXG.CrimFan.Core;
+using FXG.CrimFan.Pawn;
+using FXG.CrimFan.World.Buildings;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEngine;
@@ -107,6 +109,28 @@ namespace FXG.CrimFan.World
 
         #region Methods
 
+        public void CreateUnit(Pitch i_Key)
+        {
+            Debug.Assert(i_Key.IsOnWhiteKeys);
+
+            var team = Match.GetTeam(i_Key);
+
+            var prev = Pitches.PreviousPitch(i_Key);
+            var next = Pitches.NextPitch(i_Key);
+
+            if (team != null &&
+                (IsKeyInsideBounds(prev) && GetKey(prev).Building is Barrack ||
+                IsKeyInsideBounds(next) && GetKey(next).Building is Barrack))
+            {
+                team.Army.AddSoldier(new Vector3(
+                    GetKey(i_Key).transform.position.x,
+                    NoteSoldier.HEIGHT,
+                    Configuration.WhiteKeyScale.z / 2 -
+                    Mathf.Lerp(Configuration.BlackKeyScale.z, Configuration.WhiteKeyScale.z,
+                        Random.value)));
+            }
+        }
+
         public Pitch GetPitch(int i_KeyId)
         {
             return m_Keys[i_KeyId].Pitch;
@@ -114,7 +138,17 @@ namespace FXG.CrimFan.World
 
         public Key GetKey(Pitch i_Pitch)
         {
-            return m_Keys[i_Pitch.ToMidi() - Configuration.FirstKey.ToMidi()];
+            return m_Keys[ToIndex(i_Pitch)];
+        }
+
+        public bool IsKeyInsideBounds(Pitch i_Key)
+        {
+            return ToIndex(i_Key) >= 0 && ToIndex(i_Key) < Configuration.NumKeys;
+        }
+
+        private int ToIndex(Pitch i_Pitch)
+        {
+            return i_Pitch.ToMidi() - Configuration.FirstKey.ToMidi();
         }
 
         [UsedImplicitly]

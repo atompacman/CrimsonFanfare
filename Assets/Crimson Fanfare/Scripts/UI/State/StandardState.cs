@@ -1,6 +1,5 @@
 ﻿using FXG.CrimFan.Common;
 using FXG.CrimFan.Core;
-using FXG.CrimFan.Pawn;
 using FXG.CrimFan.World;
 using UnityEngine;
 
@@ -24,7 +23,7 @@ namespace FXG.CrimFan.UI.State
         #endregion
 
         #region Methods
-        
+
         public override void OnKeyboardKeyIdle(Key i_Key, bool i_IsOnTerritory)
         {
             UpdateKeyColor(i_Key, i_IsOnTerritory, true);
@@ -42,15 +41,9 @@ namespace FXG.CrimFan.UI.State
                 return false;
             }
 
-            if (i_Key.IsWhiteKey)
+            if (i_Key.IsAWhiteKey)
             {
-                var kc = Team.Match.Keyboard.Configuration;
-
-                Team.Army.AddSoldier(new Vector3(
-                    i_Key.transform.position.x,
-                    NoteSoldier.HEIGHT,
-                    kc.WhiteKeyScale.z / 2 -
-                    Mathf.Lerp(kc.BlackKeyScale.z, kc.WhiteKeyScale.z, Random.value)));
+                Team.Match.Keyboard.CreateUnit(i_Key.Pitch);
                 return false;
             }
 
@@ -61,7 +54,7 @@ namespace FXG.CrimFan.UI.State
         private void UpdateKeyColor(Key i_Key, bool i_IsOnTerritory, bool i_FadeOut)
         {
             var baseColor = i_IsOnTerritory
-                ? i_Key.IsWhiteKey ? Team.Color : Team.Color * 0.25f
+                ? i_Key.IsAWhiteKey ? Team.Color : Team.Color * 0.25f
                 : i_Key.DefaultColor;
 
             var velocity = MidiSource.GetHitVelocity(i_Key.Pitch);

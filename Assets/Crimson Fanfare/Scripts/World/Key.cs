@@ -16,14 +16,14 @@ namespace FXG.CrimFan.World
         [CanBeNull]
         public Building Building { get; private set; }
 
-        public bool IsWhiteKey
+        public bool IsAWhiteKey
         {
-            get { return Tones.IsOnWhiteKeys(Pitch.Tone); }
+            get { return Pitch.IsOnWhiteKeys; }
         }
 
         public Color DefaultColor
         {
-            get { return IsWhiteKey ? Color.white : Color.black; }
+            get { return IsAWhiteKey ? Color.white : Color.black; }
         }
 
         public Color Color
