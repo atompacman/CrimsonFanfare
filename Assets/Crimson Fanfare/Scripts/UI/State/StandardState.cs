@@ -68,7 +68,7 @@ namespace FXG.CrimFan.UI.State
             var etsr = i_FadeOut ? MidiSource.GetElapsedTimeSinceRelease(i_Key.Pitch) : 0;
             var factor = Mathf.Clamp01(1 - velocity + etsr / RED_FADE_OUT_RATE);
 
-            i_Key.SetColor(Color.Lerp(Team.Color.GetInverse(), baseColor, factor));
+            i_Key.Color = Color.Lerp(Team.Color.GetInverse(), baseColor, factor);
         }
 
         #endregion

@@ -24,7 +24,7 @@ namespace FXG.CrimFan.UI.State
 
         public override void InitializeKey(Key i_Key, bool i_IsOnTerritory)
         {
-            i_Key.SetColor(i_Key == m_BuildLocation ? Color.yellow : i_Key.DefaultColor);
+            i_Key.Color = i_Key == m_BuildLocation ? Color.yellow : i_Key.DefaultColor;
         }
 
         #endregion

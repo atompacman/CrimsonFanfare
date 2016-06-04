@@ -1,4 +1,6 @@
 ﻿using FXG.CrimFan.Audio;
+using FXG.CrimFan.World.Buildings;
+using JetBrains.Annotations;
 using UnityEngine;
 
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -11,6 +13,9 @@ namespace FXG.CrimFan.World
 
         public Pitch Pitch { get; private set; }
 
+        [CanBeNull]
+        public Building Building { get; private set; }
+
         public bool IsWhiteKey
         {
             get { return Tones.IsOnWhiteKeys(Pitch.Tone); }
@@ -19,6 +24,12 @@ namespace FXG.CrimFan.World
         public Color DefaultColor
         {
             get { return IsWhiteKey ? Color.white : Color.black; }
+        }
+
+        public Color Color
+        {
+            get { return GetComponent<MeshRenderer>().material.color; }
+            set { GetComponent<MeshRenderer>().material.color = value; }
         }
 
         #endregion
@@ -36,7 +47,8 @@ namespace FXG.CrimFan.World
             obj.transform.parent = i_Keyboard.transform;
             var key = obj.AddComponent<Key>();
             key.Pitch = i_Pitch;
-            key.SetColor(key.DefaultColor);
+            key.Building = null;
+            key.Color = key.DefaultColor;
             return key;
         }
 
@@ -44,9 +56,23 @@ namespace FXG.CrimFan.World
 
         #region Methods
 
-        public void SetColor(Color i_Color)
+        public void SetBuilding<T>() where T : Building
         {
-            GetComponent<MeshRenderer>().material.color = i_Color;
+            Debug.Assert(Building == null);
+            var obj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            obj.transform.parent = transform;
+            obj.transform.localScale = new Vector3(1, 0.15f, 0.8f);
+            obj.transform.position = transform.position +
+                                     Vector3.up *
+                                     (transform.localScale.y + obj.transform.lossyScale.y) / 2;
+
+            Building = obj.AddComponent<T>();
+            if (Building == null)
+            {
+                Debug.LogError("Could not create building");
+                return;
+            }
+            Building.Key = this;
         }
 
         #endregion
