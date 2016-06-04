@@ -13,6 +13,7 @@ namespace FXG.CrimFan.UI.State
 
         #region Private fields
 
+        private float m_CreationTime;
         private readonly Key m_BuildLocation;
 
         #endregion
@@ -21,6 +22,7 @@ namespace FXG.CrimFan.UI.State
 
         public BuildingCreationConfirmationState(Key i_BuildLocation)
         {
+            m_CreationTime = Time.fixedTime;
             m_BuildLocation = i_BuildLocation;
         }
 
@@ -56,8 +58,8 @@ namespace FXG.CrimFan.UI.State
 
         private void SetBuildLocationColor(Color i_Color)
         {
-            var factor = 0.5f * Mathf.Cos(Time.fixedTime * BUILD_LOC_FLASH_SPEED) + 0.5f;
-            m_BuildLocation.SetColor(Color.Lerp(i_Color, Color.white * 0.2f, factor));
+            var factor = 0.5f * Mathf.Cos((Time.fixedTime - m_CreationTime) * BUILD_LOC_FLASH_SPEED) + 0.5f;
+            m_BuildLocation.SetColor(Color.Lerp(Color.white * 0.2f, i_Color, factor));
         }
 
         #endregion

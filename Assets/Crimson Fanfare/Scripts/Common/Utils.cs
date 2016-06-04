@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 namespace FXG.CrimFan.Common
 {
@@ -46,6 +47,11 @@ namespace FXG.CrimFan.Common
         public static HorizontalDir OppositeDir(HorizontalDir i_Dir)
         {
             return (HorizontalDir) (((int) i_Dir + 1) % 2);
+        }
+
+        public static Color GetInverse(this Color i_Color)
+        {
+            return new Color(1 - i_Color.r, 1 - i_Color.g, 1 - i_Color.b);
         }
 
         #endregion

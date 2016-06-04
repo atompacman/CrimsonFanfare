@@ -1,4 +1,5 @@
-﻿using FXG.CrimFan.Core;
+﻿using FXG.CrimFan.Common;
+using FXG.CrimFan.Core;
 using FXG.CrimFan.Pawn;
 using FXG.CrimFan.World;
 using UnityEngine;
@@ -67,7 +68,7 @@ namespace FXG.CrimFan.UI.State
             var etsr = i_FadeOut ? MidiSource.GetElapsedTimeSinceRelease(i_Key.Pitch) : 0;
             var factor = Mathf.Clamp01(1 - velocity + etsr / RED_FADE_OUT_RATE);
 
-            i_Key.SetColor(Color.Lerp(Color.red, baseColor, factor));
+            i_Key.SetColor(Color.Lerp(Team.Color.GetInverse(), baseColor, factor));
         }
 
         #endregion
