@@ -1,9 +1,10 @@
-﻿using FXG.CrimFan.Common;
+﻿using System;
+using FXG.CrimFan.Audio.Midi;
+using FXG.CrimFan.Common;
 using FXG.CrimFan.Core;
 using FXG.CrimFan.UI.State;
 using FXG.CrimFan.World;
 using JetBrains.Annotations;
-using System;
 using UnityEngine;
 
 namespace FXG.CrimFan.UI
@@ -24,8 +25,8 @@ namespace FXG.CrimFan.UI
         {
             var pim = i_Keyboard.gameObject.AddComponent<KeyboardInputHandler>();
             pim.m_Match = i_Keyboard.Match;
-            pim.SetState(new YoloState(i_Keyboard.Match.TeamLeft));
-            pim.SetState(new YoloState(i_Keyboard.Match.TeamRight));
+            pim.SetState(new StandardState(i_Keyboard.Match.TeamLeft));
+            pim.SetState(new StandardState(i_Keyboard.Match.TeamRight));
             return pim;
         }
 
@@ -48,46 +49,45 @@ namespace FXG.CrimFan.UI
                 (i_State, i_Key, i_IsOnTerritory) =>
                 {
                     i_State.InitializeKey(i_Key, i_IsOnTerritory);
+                    return false;
                 });
         }
 
-        private void ExecuteForAllKeys(Action<MenuState, Key, bool> i_Action)
+        private void ExecuteForAllKeys(Func<MenuState, Key, bool, bool> i_Func)
         {
-            ExecuteForAllTeamKeys(HorizontalDir.LEFT, i_Action);
-            ExecuteForAllTeamKeys(HorizontalDir.RIGHT, i_Action);
+            ExecuteForAllTeamKeys(HorizontalDir.LEFT, i_Func);
+            ExecuteForAllTeamKeys(HorizontalDir.RIGHT, i_Func);
         }
 
         private void ExecuteForAllTeamKeys(HorizontalDir i_Side,
-            Action<MenuState, Key, bool> i_Action)
+            Func<MenuState, Key, bool, bool> i_Func)
         {
             var numKeys = m_Match.Keyboard.Configuration.NumKeys;
             var leftEnd = Mathf.Max(numKeys / 2, m_Match.TeamLeft.TerritorySize);
             leftEnd = Mathf.Min(leftEnd, numKeys - m_Match.TeamRight.TerritorySize);
             if (i_Side == HorizontalDir.LEFT)
             {
-                ExecuteForAllTeamKeys(0, leftEnd, m_LeftTeamState, i_Action);
+                ExecuteForAllTeamKeys(0, leftEnd, m_LeftTeamState, i_Func);
             }
             else
             {
-                ExecuteForAllTeamKeys(leftEnd, numKeys, m_RightTeamState, i_Action);
+                ExecuteForAllTeamKeys(leftEnd, numKeys, m_RightTeamState, i_Func);
             }
         }
 
         private void ExecuteForAllTeamKeys(int i_KeyBeg, int i_KeyEnd, MenuState i_State,
-            Action<MenuState, Key, bool> i_Action)
+            Func<MenuState, Key, bool, bool> i_Func)
         {
-            var kb = m_Match.Keyboard;
-
             for (var i = i_KeyBeg; i < i_KeyEnd; ++i)
             {
-                var pitch = kb.GetPitch(i);
-                var key = kb.GetKey(pitch);
+                var pitch = m_Match.Keyboard.GetPitch(i);
+                var key = m_Match.Keyboard.GetKey(pitch);
                 var ownership = m_Match.GetKeyOwnership(pitch);
                 var isOnTerritory = ownership != Match.Ownership.NEUTRAL;
-
-                Debug.Assert(ownership != i_State.Team.EnemyTeam.AssociatedOwnership);
-
-                i_Action(i_State, key, isOnTerritory);
+                if (i_Func(i_State, key, isOnTerritory))
+                {
+                    return;
+                }
             }
         }
 
@@ -96,19 +96,30 @@ namespace FXG.CrimFan.UI
         {
             ExecuteForAllKeys((i_State, i_Key, i_IsOnTerritory) =>
             {
-                var midiSrc = m_Match.Keyboard.MidiSource;
-                if (midiSrc.IsKeyHit(i_Key.Pitch))
+                i_State.UpdateKey(i_Key, i_IsOnTerritory);
+
+                switch (m_Match.Keyboard.MidiSource.GetKeyState(i_Key.Pitch))
                 {
+                case MidiInputSource.KeyState.IDLE:
+                    i_State.OnKeyboardKeyIdle(i_Key, i_IsOnTerritory);
+                    break;
+
+                case MidiInputSource.KeyState.HIT:
                     i_State.OnKeyboardKeyHit(i_Key, i_IsOnTerritory);
+                    break;
+
+                case MidiInputSource.KeyState.HELD:
+                    i_State.OnKeyboardKeyHeld(i_Key, i_IsOnTerritory);
+                    break;
+
+                case MidiInputSource.KeyState.RELEASED:
+                    return i_State.OnKeyboardKeyReleased(i_Key, i_IsOnTerritory);
+
+                default:
+                    throw new ArgumentOutOfRangeException();
                 }
-                if (midiSrc.IsKeyPressed(i_Key.Pitch))
-                {
-                    i_State.OnKeyboardKeyPressed(i_Key, i_IsOnTerritory);
-                }
-                if (midiSrc.IsKeyReleased(i_Key.Pitch))
-                {
-                    i_State.OnKeyboardKeyReleased(i_Key, i_IsOnTerritory);
-                }
+
+                return false;
             });
         }
 

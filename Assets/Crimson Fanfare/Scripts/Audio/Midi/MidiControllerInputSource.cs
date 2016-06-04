@@ -7,46 +7,27 @@ namespace FXG.CrimFan.Audio.Midi
 {
     public sealed class MidiControllerInputSource : MidiInputSource
     {
-        #region Nested types
-
-        private enum ButtonState
-        {
-            IDLE,
-            HIT,
-            HELD,
-            RELEASED
-        }
-
-        #endregion
-
         #region Private fields
 
         private InputDevice m_Device;
-
-        private byte[] m_HitVelocity;
-
         private bool[] m_KeyPressed;
-
-        private ButtonState[] m_KeyStates;
 
         #endregion
 
         #region Static methods
 
-        public static MidiControllerInputSource CreateComponent(InputDevice i_Device, int i_NumKeys,
-            Keyboard i_Keyboard)
+        public static MidiControllerInputSource CreateComponent(Keyboard i_Keyboard,
+            InputDevice i_Device)
         {
+            var numKeys = i_Keyboard.Configuration.NumKeys;
             var src = i_Keyboard.gameObject.AddComponent<MidiControllerInputSource>();
             src.m_Device = i_Device;
-            src.m_KeyStates = new ButtonState[i_NumKeys];
-            src.m_KeyPressed = new bool[i_NumKeys];
-            src.m_HitVelocity = new byte[i_NumKeys];
+            src.m_KeyPressed = new bool[numKeys];
 
             // Keys start in idle state
-            for (var i = 0; i < i_NumKeys; ++i)
+            for (var i = 0; i < numKeys; ++i)
             {
                 src.m_KeyPressed[i] = false;
-                src.m_KeyStates[i] = ButtonState.IDLE;
             }
 
             // Subscribe MIDI event handler
@@ -60,24 +41,34 @@ namespace FXG.CrimFan.Audio.Midi
 
         #region Methods
 
-        public override bool IsKeyHit(Pitch i_Pitch)
+        protected override void UpdateKey(int i_Idx)
         {
-            return CheckKeyState(i_Pitch, ButtonState.HIT);
-        }
-
-        public override bool IsKeyReleased(Pitch i_Pitch)
-        {
-            return CheckKeyState(i_Pitch, ButtonState.RELEASED);
-        }
-
-        public override bool IsKeyPressed(Pitch i_Pitch)
-        {
-            return !CheckKeyState(i_Pitch, ButtonState.IDLE);
-        }
-
-        public override float GetHitVelocity(Pitch i_Pitch)
-        {
-            return m_HitVelocity[i_Pitch.ToMidi() - FirstKey.ToMidi()] / 127f;
+            if (m_KeyPressed[i_Idx])
+            {
+                if (KeyStates[i_Idx] == KeyState.HIT ||
+                    KeyStates[i_Idx] == KeyState.HELD)
+                {
+                    KeyStates[i_Idx] = KeyState.HELD;
+                }
+                else
+                {
+                    KeyStates[i_Idx] = KeyState.HIT;
+                    HitTime[i_Idx] = Time.fixedTime;
+                }
+            }
+            else
+            {
+                if (KeyStates[i_Idx] == KeyState.RELEASED ||
+                    KeyStates[i_Idx] == KeyState.IDLE)
+                {
+                    KeyStates[i_Idx] = KeyState.IDLE;
+                }
+                else
+                {
+                    KeyStates[i_Idx] = KeyState.RELEASED;
+                    ReleaseTime[i_Idx] = Time.fixedTime;
+                }
+            }
         }
 
         [UsedImplicitly]
@@ -85,11 +76,6 @@ namespace FXG.CrimFan.Audio.Midi
         {
             m_Device.StopRecording();
             m_Device.Dispose();
-        }
-
-        private bool CheckKeyState(Pitch i_Pitch, ButtonState i_State)
-        {
-            return m_KeyStates[i_Pitch.ToMidi() - FirstKey.ToMidi()] == i_State;
         }
 
         private void OnChannelMessageReceived(object i_O, ChannelMessageEventArgs i_Args)
@@ -103,31 +89,9 @@ namespace FXG.CrimFan.Audio.Midi
             }
 
             // Update binary pressed state and velocity
-            var idx = msg.Data1 - FirstKey.ToMidi();
+            var idx = msg.Data1 - KeyboardConfig.FirstKey.ToMidi();
             m_KeyPressed[idx] = msg.Command == ChannelCommand.NoteOn;
-            m_HitVelocity[idx] = (byte) msg.Data2;
-        }
-
-        [UsedImplicitly]
-        private void Update()
-        {
-            for (var i = 0; i < m_KeyPressed.Length; ++i)
-            {
-                if (m_KeyPressed[i])
-                {
-                    m_KeyStates[i] = m_KeyStates[i] == ButtonState.HIT ||
-                                     m_KeyStates[i] == ButtonState.HELD
-                        ? ButtonState.HELD
-                        : ButtonState.HIT;
-                }
-                else
-                {
-                    m_KeyStates[i] = m_KeyStates[i] == ButtonState.RELEASED ||
-                                     m_KeyStates[i] == ButtonState.IDLE
-                        ? ButtonState.IDLE
-                        : ButtonState.RELEASED;
-                }
-            }
+            HitVelocity[idx] = (byte) msg.Data2;
         }
 
         #endregion

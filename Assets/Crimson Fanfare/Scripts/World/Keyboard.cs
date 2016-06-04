@@ -4,7 +4,6 @@ using FXG.CrimFan.Config;
 using FXG.CrimFan.Core;
 using JetBrains.Annotations;
 using System.Collections.Generic;
-using FXG.CrimFan.UI;
 using UnityEngine;
 
 // ReSharper disable UseNullPropagation
@@ -39,8 +38,7 @@ namespace FXG.CrimFan.World
             kb.Match = i_Match;
 
             // Create MIDI input source
-            kb.MidiSource = MidiInputSource.CreateComponent(i_Config.DeviceName, i_Config.NumKeys,
-                i_Config.FirstKey, kb);
+            kb.MidiSource = MidiInputSource.CreateComponent(kb);
 
             // First key must be white
             if (!Tones.IsOnWhiteKeys(i_Config.FirstKey.Tone))

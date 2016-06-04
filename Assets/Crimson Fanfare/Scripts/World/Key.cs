@@ -16,6 +16,11 @@ namespace FXG.CrimFan.World
             get { return Tones.IsOnWhiteKeys(Pitch.Tone); }
         }
 
+        public Color DefaultColor
+        {
+            get { return IsWhiteKey ? Color.white : Color.black; }
+        }
+
         #endregion
 
         #region Static methods
@@ -31,7 +36,7 @@ namespace FXG.CrimFan.World
             obj.transform.parent = i_Keyboard.transform;
             var key = obj.AddComponent<Key>();
             key.Pitch = i_Pitch;
-            key.SetDefaultColor();
+            key.SetColor(key.DefaultColor);
             return key;
         }
 
@@ -42,11 +47,6 @@ namespace FXG.CrimFan.World
         public void SetColor(Color i_Color)
         {
             GetComponent<MeshRenderer>().material.color = i_Color;
-        }
-
-        public void SetDefaultColor()
-        {
-            SetColor(IsWhiteKey ? Color.white : Color.black);
         }
 
         #endregion

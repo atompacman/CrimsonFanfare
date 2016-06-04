@@ -29,6 +29,8 @@ namespace FXG.CrimFan.Core
 
         public Keyboard Keyboard { get; private set; }
 
+        public KeyboardInputHandler KeyboardInputHandler { get; private set; }
+
         #endregion
 
         #region Static methods
@@ -39,7 +41,7 @@ namespace FXG.CrimFan.Core
             match.TeamLeft = Team.CreateObject(HorizontalDir.LEFT, Color.green, match);
             match.TeamRight = Team.CreateObject(HorizontalDir.RIGHT, Color.blue, match);
             match.Keyboard = Keyboard.CreateObject(i_Config.KeyboardConfig, match);
-            KeyboardInputHandler.CreateComponent(match.Keyboard);
+            match.KeyboardInputHandler = KeyboardInputHandler.CreateComponent(match.Keyboard);
             return match;
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using FXG.CrimFan.Common;
 using FXG.CrimFan.Pawn;
 using UnityEngine;

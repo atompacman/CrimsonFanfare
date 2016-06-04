@@ -120,8 +120,9 @@ namespace FXG.CrimFan.Pawn
             // If we must find a new target
             if (m_Target == null || m_Target.IsDead || !IsInRange(m_Target))
             {
+                var rnd = new System.Random();
                 m_Target = (from enemy in Army.Team.EnemyTeam.Army.GetSoldiers()
-                    orderby DistanceTo(enemy) ascending
+                    orderby rnd.Next() ascending
                     where !enemy.IsDead && IsInRange(enemy)
                     select enemy).FirstOrDefault();
             }

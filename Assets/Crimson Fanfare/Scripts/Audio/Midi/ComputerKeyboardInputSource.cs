@@ -1,71 +1,56 @@
-﻿using System;
-using FXG.CrimFan.World;
+﻿using FXG.CrimFan.World;
 using UnityEngine;
 
 namespace FXG.CrimFan.Audio.Midi
 {
     public sealed class ComputerKeyboardInputSource : MidiInputSource
     {
-        #region Compile-time constants
-
-        private const float VELOCITY = 1f;
-
-        #endregion
-
-        #region Private fields
-
-        private int m_NumKeys;
-
-        #endregion
-
         #region Static methods
 
-        public static ComputerKeyboardInputSource CreateComponent(int i_NumKeys, Keyboard i_Keyboard)
+        public new static ComputerKeyboardInputSource CreateComponent(Keyboard i_Keyboard)
         {
-            var src = i_Keyboard.gameObject.AddComponent<ComputerKeyboardInputSource>();
-            src.m_NumKeys = i_NumKeys;
-            return src;
+            return i_Keyboard.gameObject.AddComponent<ComputerKeyboardInputSource>();
         }
 
         #endregion
 
         #region Methods
 
-        public override bool IsKeyHit(Pitch i_Pitch)
+        protected override void UpdateKey(int i_Idx)
         {
-            return CheckKeyState(i_Pitch, Input.GetKeyDown);
-        }
-
-        public override bool IsKeyReleased(Pitch i_Pitch)
-        {
-            return CheckKeyState(i_Pitch, Input.GetKeyUp);
-        }
-
-        public override bool IsKeyPressed(Pitch i_Pitch)
-        {
-            return CheckKeyState(i_Pitch, Input.GetKey);
-        }
-
-        public override float GetHitVelocity(Pitch i_Pitch)
-        {
-            return VELOCITY;
-        }
-
-        private bool CheckKeyState(Pitch i_Pitch, Func<string, bool> i_InputMethod)
-        {
-            var relativeKey = i_Pitch.ToMidi() - FirstKey.ToMidi();
-
-            // Piano keyboard cannot be mapped on the computer keyboard
-            if (relativeKey < Mathf.Min(m_NumKeys, 13))
+            // Map key to keyboard name
+            string keyName = null;
+            if (i_Idx < Mathf.Min(KeyboardConfig.NumKeys, 13))
             {
-                return i_InputMethod(((char) (relativeKey + 'a')).ToString());
+                keyName = ((char) (i_Idx + 'a')).ToString();
             }
-            if (relativeKey >= Mathf.Max(0, m_NumKeys - 13))
+            if (i_Idx >= Mathf.Max(0, KeyboardConfig.NumKeys - 13))
             {
-                return i_InputMethod(((char) (relativeKey - (m_NumKeys - 26) + 'a')).ToString());
+                keyName = ((char) (i_Idx - (KeyboardConfig.NumKeys - 26) + 'a')).ToString();
+            }
+            if (keyName == null)
+            {
+                return;
             }
 
-            return false;
+            if (Input.GetKeyDown(keyName))
+            {
+                KeyStates[i_Idx] = KeyState.HIT;
+                HitTime[i_Idx] = Time.fixedTime;
+            }
+            else if (Input.GetKeyUp(keyName))
+            {
+                KeyStates[i_Idx] = KeyState.RELEASED;
+                ReleaseTime[i_Idx] = Time.fixedTime;
+            }
+            else if (Input.GetKey(keyName))
+            {
+                KeyStates[i_Idx] = KeyState.HELD;
+            }
+            else
+            {
+                KeyStates[i_Idx] = KeyState.IDLE;
+            }
         }
 
         #endregion
