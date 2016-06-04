@@ -1,29 +1,20 @@
 ﻿using FXG.CrimFan.Audio;
-using FXG.CrimFan.Audio.Midi;
-using JetBrains.Annotations;
 using UnityEngine;
+
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace FXG.CrimFan.World
 {
     public sealed class Key : MonoBehaviour
     {
-        #region Compile-time constants
-
-        private const float NOTE_SOLDIER_HEIGHT = 0.2f;
-
-        #endregion
-
-        #region Private fields
-
-        private MidiInputSource m_InputSrc;
-
-        private Keyboard m_Keyboard;
-
-        #endregion
-
         #region Properties
 
         public Pitch Pitch { get; private set; }
+
+        public bool IsWhiteKey
+        {
+            get { return Tones.IsOnWhiteKeys(Pitch.Tone); }
+        }
 
         #endregion
 
@@ -39,9 +30,8 @@ namespace FXG.CrimFan.World
             obj.transform.position = i_Pos;
             obj.transform.parent = i_Keyboard.transform;
             var key = obj.AddComponent<Key>();
-            key.m_InputSrc = i_Keyboard.MidiListener;
             key.Pitch = i_Pitch;
-            key.m_Keyboard = i_Keyboard;
+            key.SetDefaultColor();
             return key;
         }
 
@@ -49,49 +39,14 @@ namespace FXG.CrimFan.World
 
         #region Methods
 
-        [UsedImplicitly]
-        private void Update()
+        public void SetColor(Color i_Color)
         {
-            // Get team associated with this key
-            var team = m_Keyboard.CurrentMatch.GetTeam(Pitch);
+            GetComponent<MeshRenderer>().material.color = i_Color;
+        }
 
-            // If the key belongs to a team, create a soldier the first frame the key is pressed
-            // ReSharper disable once UseNullPropagation
-            if (m_InputSrc.IsKeyHit(Pitch) && team != null)
-            {
-                Debug.Assert(Tones.IsOnWhiteKeys(Pitch.Tone));
-
-                var kc = m_Keyboard.Configuration;
-                team.Army.AddSoldier(new Vector3(
-                    transform.position.x,
-                    NOTE_SOLDIER_HEIGHT,
-                    kc.WhiteKeyScale.z / 2 -
-                    Mathf.Lerp(kc.BlackKeyScale.z, kc.WhiteKeyScale.z, Random.value)));
-            }
-
-            // Set key color
-            Color color;
-            if (m_InputSrc.IsKeyPressed(Pitch))
-            {
-                color = Color.red * m_InputSrc.GetHitVelocity(Pitch);
-            }
-            else
-            {
-                if (team == null)
-                {
-                    color = Tones.IsOnWhiteKeys(Pitch.Tone) ? Color.white : Color.black;
-                }
-                else
-                {
-                    color = team.Color;
-                    if (!Tones.IsOnWhiteKeys(Pitch.Tone))
-                    {
-                        color *= 0.25f;
-                    }
-                }
-            }
-
-            GetComponent<MeshRenderer>().material.color = color;
+        public void SetDefaultColor()
+        {
+            SetColor(IsWhiteKey ? Color.white : Color.black);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using Sanford.Multimedia.Midi;
+﻿using FXG.CrimFan.World;
+using Sanford.Multimedia.Midi;
 using UnityEngine;
 
 namespace FXG.CrimFan.Audio.Midi
@@ -26,7 +27,7 @@ namespace FXG.CrimFan.Audio.Midi
         #region Static methods
 
         public static MidiInputSource CreateComponent(string i_DeviceName, int i_NumKeys,
-            Pitch i_FirstKey, GameObject i_Parent)
+            Pitch i_FirstKey, Keyboard i_Keyboard)
         {
             // Look for a input device with the specified name
             InputDevice device = null;
@@ -48,11 +49,11 @@ namespace FXG.CrimFan.Audio.Midi
             {
                 Debug.Log("Could not find MIDI controller \"" + i_DeviceName +
                           "\". Using computer keyboard instead.");
-                src = ComputerKeyboardInputSource.CreateComponent(i_NumKeys, i_Parent);
+                src = ComputerKeyboardInputSource.CreateComponent(i_NumKeys, i_Keyboard);
             }
             else
             {
-                src = MidiControllerInputSource.CreateComponent(device, i_NumKeys, i_Parent);
+                src = MidiControllerInputSource.CreateComponent(device, i_NumKeys, i_Keyboard);
             }
 
             // Initialize common MidiInputSource members

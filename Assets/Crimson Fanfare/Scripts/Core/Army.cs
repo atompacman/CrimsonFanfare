@@ -26,11 +26,6 @@ namespace FXG.CrimFan.Core
             get { return Team.Side; }
         }
 
-        public Army EnemyArmy
-        {
-            get { return Team.Match.GetEnemyTeamOf(Team).Army; }
-        }
-
         #endregion
 
         #region Static methods

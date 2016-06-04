@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using FXG.CrimFan.World;
+using JetBrains.Annotations;
 using Sanford.Multimedia.Midi;
 using UnityEngine;
 
@@ -33,9 +34,9 @@ namespace FXG.CrimFan.Audio.Midi
         #region Static methods
 
         public static MidiControllerInputSource CreateComponent(InputDevice i_Device, int i_NumKeys,
-            GameObject i_Parent)
+            Keyboard i_Keyboard)
         {
-            var src = i_Parent.AddComponent<MidiControllerInputSource>();
+            var src = i_Keyboard.gameObject.AddComponent<MidiControllerInputSource>();
             src.m_Device = i_Device;
             src.m_KeyStates = new ButtonState[i_NumKeys];
             src.m_KeyPressed = new bool[i_NumKeys];

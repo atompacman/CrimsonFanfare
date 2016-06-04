@@ -1,5 +1,10 @@
 ﻿using FXG.CrimFan.Common;
+using FXG.CrimFan.UI;
 using UnityEngine;
+
+// ReSharper disable ConvertPropertyToExpressionBody
+
+// ReSharper disable once ConvertPropertyToExpressionBody
 
 namespace FXG.CrimFan.Core
 {
@@ -22,6 +27,21 @@ namespace FXG.CrimFan.Core
         public Color Color { get; private set; }
 
         public Match Match { get; private set; }
+
+        public Match.Ownership AssociatedOwnership
+        {
+            get
+            {
+                return Side == HorizontalDir.LEFT
+                    ? Match.Ownership.TEAM_LEFT
+                    : Match.Ownership.TEAM_RIGHT;
+            }
+        }
+
+        public Team EnemyTeam
+        {
+            get { return Side == HorizontalDir.LEFT ? Match.TeamRight : Match.TeamLeft; }
+        }
 
         #endregion
 

@@ -35,7 +35,7 @@ namespace FXG.CrimFan.Core
             }
 
             // Start new match
-            Match.CreateComponent(Configuration, gameObject);
+            Match.CreateComponent(Configuration, this);
             m_PrevConfig = new GameConfig(Configuration);
         }
 

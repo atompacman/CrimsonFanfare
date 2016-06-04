@@ -1,6 +1,7 @@
 ﻿using FXG.CrimFan.Audio;
 using FXG.CrimFan.Common;
 using FXG.CrimFan.Config;
+using FXG.CrimFan.UI;
 using FXG.CrimFan.World;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -20,28 +21,25 @@ namespace FXG.CrimFan.Core
 
         #endregion
 
-        #region Private fields
-
-        private Keyboard m_Keyboard;
-
-        #endregion
-
         #region Properties
 
         public Team TeamLeft { get; private set; }
 
         public Team TeamRight { get; private set; }
 
+        public Keyboard Keyboard { get; private set; }
+
         #endregion
 
         #region Static methods
 
-        public static Match CreateComponent(GameConfig i_Config, GameObject i_Parent)
+        public static Match CreateComponent(GameConfig i_Config, GameDriver i_Driver)
         {
-            var match = i_Parent.AddComponent<Match>();
-            match.m_Keyboard = Keyboard.CreateObject(i_Config.KeyboardConfig, match);
+            var match = i_Driver.gameObject.AddComponent<Match>();
             match.TeamLeft = Team.CreateObject(HorizontalDir.LEFT, Color.green, match);
             match.TeamRight = Team.CreateObject(HorizontalDir.RIGHT, Color.blue, match);
+            match.Keyboard = Keyboard.CreateObject(i_Config.KeyboardConfig, match);
+            KeyboardInputHandler.CreateComponent(match.Keyboard);
             return match;
         }
 
@@ -51,10 +49,10 @@ namespace FXG.CrimFan.Core
 
         public Ownership GetKeyOwnership(Pitch i_Pitch)
         {
-            var idx = i_Pitch.ToMidi() - m_Keyboard.Configuration.FirstKey.ToMidi();
+            var idx = i_Pitch.ToMidi() - Keyboard.Configuration.FirstKey.ToMidi();
             return idx < TeamLeft.TerritorySize
                 ? Ownership.TEAM_LEFT
-                : idx >= m_Keyboard.Configuration.NumKeys - TeamRight.TerritorySize
+                : idx >= Keyboard.Configuration.NumKeys - TeamRight.TerritorySize
                     ? Ownership.TEAM_RIGHT
                     : Ownership.NEUTRAL;
         }
@@ -73,11 +71,6 @@ namespace FXG.CrimFan.Core
                 : ownership == Ownership.TEAM_LEFT
                     ? TeamLeft
                     : TeamRight;
-        }
-
-        public Team GetEnemyTeamOf(Team i_Team)
-        {
-            return i_Team.Side == HorizontalDir.LEFT ? TeamRight : TeamLeft;
         }
 
         #endregion

@@ -33,7 +33,7 @@ namespace FXG.CrimFan.Pawn
 
         #region Static methods
 
-        public static HealthBar CreateObject(GameObject i_NoteSoldier)
+        public static HealthBar CreateObject(NoteSoldier i_NoteSoldier)
         {
             var bar = Instantiate(PREFAB);
             bar.transform.parent = i_NoteSoldier.transform;

@@ -1,4 +1,5 @@
 ﻿using System;
+using FXG.CrimFan.World;
 using UnityEngine;
 
 namespace FXG.CrimFan.Audio.Midi
@@ -19,9 +20,9 @@ namespace FXG.CrimFan.Audio.Midi
 
         #region Static methods
 
-        public static ComputerKeyboardInputSource CreateComponent(int i_NumKeys, GameObject i_Parent)
+        public static ComputerKeyboardInputSource CreateComponent(int i_NumKeys, Keyboard i_Keyboard)
         {
-            var src = i_Parent.AddComponent<ComputerKeyboardInputSource>();
+            var src = i_Keyboard.gameObject.AddComponent<ComputerKeyboardInputSource>();
             src.m_NumKeys = i_NumKeys;
             return src;
         }

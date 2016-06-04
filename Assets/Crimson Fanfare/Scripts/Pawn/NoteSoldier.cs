@@ -10,6 +10,12 @@ namespace FXG.CrimFan.Pawn
 {
     public sealed class NoteSoldier : MonoBehaviour
     {
+        #region Compile-time constants
+
+        public const float HEIGHT = 0.2f;
+
+        #endregion
+
         #region Nested types
 
         public enum State
@@ -86,7 +92,7 @@ namespace FXG.CrimFan.Pawn
             }
 
             // CreateComponent health bar
-            HealthBar.CreateObject(obj);
+            HealthBar.CreateObject(soldier);
 
             return soldier;
         }
@@ -105,7 +111,7 @@ namespace FXG.CrimFan.Pawn
                 return;
             }
 
-            var efl = Army.EnemyArmy.FrontLine;
+            var efl = Army.Team.EnemyTeam.Army.FrontLine;
             if (efl.Exists && Mathf.Abs(efl.Position - transform.position.x) < Range)
             {
                 UpdateFireState();
@@ -119,7 +125,7 @@ namespace FXG.CrimFan.Pawn
         private void UpdateFireState()
         {
             CurrentState = State.FIRING;
-            var enemies = new List<NoteSoldier>(Army.EnemyArmy.FrontLine.Soldiers);
+            var enemies = new List<NoteSoldier>(Army.Team.EnemyTeam.Army.FrontLine.Soldiers);
             var enemy = enemies[Random.Range(0, enemies.Count)];
             if (!enemy.IsDead)
             {
