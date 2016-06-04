@@ -38,7 +38,7 @@ namespace FXG.CrimFan.UI.State
 
         public override bool OnKeyboardKeyReleased(Key i_Key, bool i_IsOnTerritory)
         {
-            if (i_Key == m_BuildLocation)
+            if (i_Key == m_BuildLocation && i_Key.Building == null)
             {
                 //ChangeState(new BuildingCreationState(i_Key));
                 i_Key.SetBuilding<Barrack>();

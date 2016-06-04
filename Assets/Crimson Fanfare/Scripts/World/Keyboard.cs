@@ -115,19 +115,39 @@ namespace FXG.CrimFan.World
 
             var team = Match.GetTeam(i_Key);
 
+            if (team == null)
+            {
+                Debug.LogError("Null team");
+                return;
+            }
+
             var prev = Pitches.PreviousPitch(i_Key);
             var next = Pitches.NextPitch(i_Key);
+            var prevBuild = IsKeyInsideBounds(prev) ? GetKey(prev).Building : null;
+            var nextBuild = IsKeyInsideBounds(next) ? GetKey(next).Building : null;
 
-            if (team != null &&
-                (IsKeyInsideBounds(prev) && GetKey(prev).Building is Barrack ||
-                IsKeyInsideBounds(next) && GetKey(next).Building is Barrack))
+            if ((prevBuild == null || !prevBuild.CanSpawnUnits()) &&
+                (nextBuild == null || !nextBuild.CanSpawnUnits()))
             {
-                team.Army.AddSoldier(new Vector3(
-                    GetKey(i_Key).transform.position.x,
-                    NoteSoldier.HEIGHT,
-                    Configuration.WhiteKeyScale.z / 2 -
-                    Mathf.Lerp(Configuration.BlackKeyScale.z, Configuration.WhiteKeyScale.z,
-                        Random.value)));
+                return;
+            }
+            
+            team.Army.AddSoldier(new Vector3(
+                GetKey(i_Key).transform.position.x,
+                NoteSoldier.HEIGHT,
+                Configuration.WhiteKeyScale.z / 2 -
+                Mathf.Lerp(Configuration.BlackKeyScale.z, Configuration.WhiteKeyScale.z,
+                    Random.value)));
+
+            StartCooldownIfPossible((Barrack) prevBuild);
+            StartCooldownIfPossible((Barrack) nextBuild);
+        }
+
+        private static void StartCooldownIfPossible(Barrack i_Barrack)
+        {
+            if (i_Barrack != null && i_Barrack.CanSpawnUnits())
+            {
+                i_Barrack.StartCooldown();
             }
         }
 
