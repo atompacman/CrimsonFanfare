@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using FXG.CrimFan.Common;
 using FXG.CrimFan.Core;
 using JetBrains.Annotations;
 using UnityEngine;
+
+// ReSharper disable SuggestBaseTypeForParameter
 
 // ReSharper disable ConvertPropertyToExpressionBody
 
@@ -10,12 +12,6 @@ namespace FXG.CrimFan.Pawn
 {
     public sealed class NoteSoldier : MonoBehaviour
     {
-        #region Compile-time constants
-
-        public const float HEIGHT = 0.2f;
-
-        #endregion
-
         #region Nested types
 
         public enum State
@@ -28,6 +24,8 @@ namespace FXG.CrimFan.Pawn
 
         #region Compile-time constants
 
+        public const float HEIGHT = 0.2f;
+
         private const string PREFAB_NAME = "NoteSoldier";
 
         #endregion
@@ -35,6 +33,13 @@ namespace FXG.CrimFan.Pawn
         #region Runtime constants
 
         private static readonly GameObject PREFAB;
+
+        #endregion
+
+        #region Private fields
+
+        [CanBeNull]
+        private NoteSoldier m_Target;
 
         #endregion
 
@@ -77,11 +82,12 @@ namespace FXG.CrimFan.Pawn
             obj.transform.position = i_Position;
             var soldier = obj.GetComponent<NoteSoldier>();
             soldier.Army = i_Army;
-            soldier.Range = Random.value * 1f;
+            soldier.Range = 0.5f + Random.value * 0.3f;
             soldier.InitialHealth = Random.Range(2, 10);
             soldier.Health = soldier.InitialHealth;
             soldier.FireRate = Random.value * 1f;
             soldier.CurrentState = State.MOVING;
+            soldier.m_Target = null;
 
             // Face good direction
             if (soldier.Army.Side == HorizontalDir.RIGHT)
@@ -111,25 +117,41 @@ namespace FXG.CrimFan.Pawn
                 return;
             }
 
-            var efl = Army.Team.EnemyTeam.Army.FrontLine;
-            if (efl.Exists && Mathf.Abs(efl.Position - transform.position.x) < Range)
+            // If we must find a new target
+            if (m_Target == null || m_Target.IsDead || !IsInRange(m_Target))
             {
-                UpdateFireState();
+                m_Target = (from enemy in Army.Team.EnemyTeam.Army.GetSoldiers()
+                    orderby DistanceTo(enemy) ascending
+                    where !enemy.IsDead && IsInRange(enemy)
+                    select enemy).FirstOrDefault();
             }
-            else
+
+            if (m_Target == null)
             {
                 UpdateMovingState();
             }
+            else
+            {
+                UpdateFireState();
+            }
+        }
+
+        private float DistanceTo(NoteSoldier i_Enemy)
+        {
+            return Mathf.Abs(i_Enemy.transform.position.x - transform.position.x);
+        }
+
+        private bool IsInRange(NoteSoldier i_Enemy)
+        {
+            return DistanceTo(i_Enemy) < Range;
         }
 
         private void UpdateFireState()
         {
             CurrentState = State.FIRING;
-            var enemies = new List<NoteSoldier>(Army.Team.EnemyTeam.Army.FrontLine.Soldiers);
-            var enemy = enemies[Random.Range(0, enemies.Count)];
-            if (!enemy.IsDead)
+            if (m_Target != null && !m_Target.IsDead)
             {
-                enemy.Health -= 0.03f;
+                m_Target.Health -= 0.03f;
             }
         }
 

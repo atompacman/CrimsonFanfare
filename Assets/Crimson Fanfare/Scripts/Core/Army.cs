@@ -19,8 +19,6 @@ namespace FXG.CrimFan.Core
 
         public Team Team { get; private set; }
 
-        public FrontLine FrontLine { get; private set; }
-
         public HorizontalDir Side
         {
             get { return Team.Side; }
@@ -35,7 +33,6 @@ namespace FXG.CrimFan.Core
             var army = i_Team.gameObject.AddComponent<Army>();
             army.m_Soldiers = new List<NoteSoldier>();
             army.Team = i_Team;
-            army.FrontLine = FrontLine.CreateComponent(army);
             return army;
         }
 
