@@ -179,16 +179,7 @@ namespace FXG.CrimFan.World
         {
             return i_Pitch.ToMidi() - Configuration.FirstKey.ToMidi();
         }
-
-        [UsedImplicitly]
-        private void OnDestroy()
-        {
-            foreach (var key in m_Keys)
-            {
-                Destroy(key);
-            }
-        }
-
+        
         #endregion
     }
 }

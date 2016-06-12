@@ -32,6 +32,8 @@ namespace FXG.CrimFan.Core
 
         public float MaxHp { get; private set; }
 
+        public bool IsDefeated { get { return Mathf.Approximately(Hp, 0); } }
+
         public Match.Ownership AssociatedOwnership
         {
             get

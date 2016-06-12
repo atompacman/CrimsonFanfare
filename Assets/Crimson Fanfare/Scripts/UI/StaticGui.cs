@@ -34,6 +34,7 @@ namespace FXG.CrimFan.UI
         public static StaticGui CreateObject(Match i_Match)
         {
             var gui = Instantiate(PREFAB).GetComponent<StaticGui>();
+            gui.transform.SetParent(i_Match.transform, false);
             TeamHpGuiElement.InitializeObject(i_Match.TeamLeft, gui);
             TeamHpGuiElement.InitializeObject(i_Match.TeamRight, gui);
             return gui;

@@ -97,7 +97,7 @@ namespace FXG.CrimFan.Pawn
                 soldier.transform.localScale = scale;
             }
 
-            // CreateComponent health bar
+            // Create health bar
             HealthBar.CreateObject(soldier);
 
             return soldier;

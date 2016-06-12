@@ -21,22 +21,40 @@ namespace FXG.CrimFan.Core
         /// </summary>
         public GameConfig Configuration;
 
+        private Match m_Match;
+
+        private bool m_MustCreateNewMatch;
+
         #endregion
 
         #region Methods
 
         [UsedImplicitly]
+        private void Start()
+        {
+            m_MustCreateNewMatch = true;
+        }
+
+        [UsedImplicitly]
         private void Update()
         {
+            if (m_MustCreateNewMatch)
+            {
+                // Start new match
+                m_Match = Match.CreateObject(Configuration, this);
+                m_PrevConfig = new GameConfig(Configuration);
+                m_MustCreateNewMatch = false;
+            }
+
             // Do nothing if configuration has not changed
-            if (Configuration == m_PrevConfig)
+            if (Configuration == m_PrevConfig && !m_Match.IsOver)
             {
                 return;
             }
 
-            // Start new match
-            Match.CreateComponent(Configuration, this);
-            m_PrevConfig = new GameConfig(Configuration);
+            // Destroy current match
+            Destroy(transform.Find(Match.GAME_OBJ_NAME).gameObject);
+            m_MustCreateNewMatch = true;
         }
 
         #endregion

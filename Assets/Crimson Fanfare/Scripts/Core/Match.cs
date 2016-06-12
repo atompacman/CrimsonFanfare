@@ -6,6 +6,8 @@ using FXG.CrimFan.World;
 using JetBrains.Annotations;
 using UnityEngine;
 
+// ReSharper disable ConvertPropertyToExpressionBody
+
 namespace FXG.CrimFan.Core
 {
     public sealed class Match : MonoBehaviour
@@ -21,6 +23,12 @@ namespace FXG.CrimFan.Core
 
         #endregion
 
+        #region Compile-time constants
+
+        public const string GAME_OBJ_NAME = "Match";
+
+        #endregion
+
         #region Properties
 
         public Team TeamLeft { get; private set; }
@@ -31,13 +39,19 @@ namespace FXG.CrimFan.Core
 
         public KeyboardInputHandler KeyboardInputHandler { get; private set; }
 
+        public bool IsOver
+        {
+            get { return TeamLeft.IsDefeated || TeamRight.IsDefeated; }
+        }
+
         #endregion
 
         #region Static methods
 
-        public static Match CreateComponent(GameConfig i_Config, GameDriver i_Driver)
+        public static Match CreateObject(GameConfig i_Config, GameDriver i_Driver)
         {
-            var match = i_Driver.gameObject.AddComponent<Match>();
+            var match = new GameObject(GAME_OBJ_NAME).AddComponent<Match>();
+            match.transform.parent = i_Driver.transform;
             match.TeamLeft = Team.CreateObject(HorizontalDir.LEFT, Color.green, match);
             match.TeamRight = Team.CreateObject(HorizontalDir.RIGHT, Color.blue, match);
             match.Keyboard = Keyboard.CreateObject(i_Config.KeyboardConfig, match);
