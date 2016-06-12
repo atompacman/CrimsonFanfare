@@ -167,6 +167,14 @@ namespace FXG.CrimFan.Pawn
             {
                 transform.position += Vector3.right * 0.01f;
             }
+
+            if (Army.Team.Match.Keyboard.IsWithinLimits(this))
+            {
+                return;
+            }
+
+            Army.Team.EnemyTeam.AttackHq(1);
+            Health = 0;
         }
 
         #endregion

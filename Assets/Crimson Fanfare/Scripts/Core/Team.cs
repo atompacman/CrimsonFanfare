@@ -65,6 +65,11 @@ namespace FXG.CrimFan.Core
             return team;
         }
 
+        public void AttackHq(float i_Dmg)
+        {
+            Hp = Mathf.Max(0, Hp - i_Dmg);
+        }
+
         #endregion
     }
 }

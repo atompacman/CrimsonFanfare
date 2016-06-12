@@ -1,11 +1,11 @@
-﻿using FXG.CrimFan.Audio;
+﻿using System.Collections.Generic;
+using FXG.CrimFan.Audio;
 using FXG.CrimFan.Audio.Midi;
 using FXG.CrimFan.Config;
 using FXG.CrimFan.Core;
 using FXG.CrimFan.Pawn;
 using FXG.CrimFan.World.Buildings;
 using JetBrains.Annotations;
-using System.Collections.Generic;
 using UnityEngine;
 
 // ReSharper disable UseNullPropagation
@@ -105,6 +105,14 @@ namespace FXG.CrimFan.World
             return kb;
         }
 
+        private static void StartCooldownIfPossible(Barrack i_Barrack)
+        {
+            if (i_Barrack != null && i_Barrack.CanSpawnUnits())
+            {
+                i_Barrack.StartCooldown();
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -131,7 +139,7 @@ namespace FXG.CrimFan.World
             {
                 return;
             }
-            
+
             team.Army.AddSoldier(new Vector3(
                 GetKey(i_Key).transform.position.x,
                 NoteSoldier.HEIGHT,
@@ -141,14 +149,6 @@ namespace FXG.CrimFan.World
 
             StartCooldownIfPossible((Barrack) prevBuild);
             StartCooldownIfPossible((Barrack) nextBuild);
-        }
-
-        private static void StartCooldownIfPossible(Barrack i_Barrack)
-        {
-            if (i_Barrack != null && i_Barrack.CanSpawnUnits())
-            {
-                i_Barrack.StartCooldown();
-            }
         }
 
         public Pitch GetPitch(int i_KeyId)
@@ -164,6 +164,15 @@ namespace FXG.CrimFan.World
         public bool IsKeyInsideBounds(Pitch i_Key)
         {
             return ToIndex(i_Key) >= 0 && ToIndex(i_Key) < Configuration.NumKeys;
+        }
+
+        public bool IsWithinLimits(NoteSoldier i_Unit)
+        {
+            var posX = i_Unit.transform.position.x;
+            var first = m_Keys[0].transform;
+            var last = m_Keys[m_Keys.Count - 1].transform;
+            return posX > first.position.x - first.localScale.x &&
+                   posX < last.position.x + last.localScale.x;
         }
 
         private int ToIndex(Pitch i_Pitch)
