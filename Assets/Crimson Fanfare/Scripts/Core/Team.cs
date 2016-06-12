@@ -1,10 +1,9 @@
 ﻿using FXG.CrimFan.Common;
-using FXG.CrimFan.UI;
 using UnityEngine;
 
 // ReSharper disable ConvertPropertyToExpressionBody
 
-// ReSharper disable once ConvertPropertyToExpressionBody
+// ReSharper disable ConvertPropertyToExpressionBody
 
 namespace FXG.CrimFan.Core
 {
@@ -12,13 +11,12 @@ namespace FXG.CrimFan.Core
     {
         #region Compile-time constants
 
+        private const float INIT_HP = 100f;
         private const int MIN_INIT_TERRITORY_SIZE = 5;
 
         #endregion
 
         #region Properties
-
-        public Army Army { get; private set; }
 
         public HorizontalDir Side { get; private set; }
 
@@ -26,7 +24,13 @@ namespace FXG.CrimFan.Core
 
         public Color Color { get; private set; }
 
+        public Army Army { get; private set; }
+
         public Match Match { get; private set; }
+
+        public float Hp { get; private set; }
+
+        public float MaxHp { get; private set; }
 
         public Match.Ownership AssociatedOwnership
         {
@@ -54,8 +58,10 @@ namespace FXG.CrimFan.Core
             team.Side = i_Side;
             team.TerritorySize = MIN_INIT_TERRITORY_SIZE;
             team.Color = i_Color;
-            team.Match = i_Match;
             team.Army = Army.CreateComponent(team);
+            team.Match = i_Match;
+            team.Hp = INIT_HP;
+            team.MaxHp = INIT_HP;
             return team;
         }
 

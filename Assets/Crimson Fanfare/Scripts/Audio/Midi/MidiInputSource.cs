@@ -90,7 +90,7 @@ namespace FXG.CrimFan.Audio.Midi
                 src.KeyStates[i] = KeyState.IDLE;
                 src.HitTime[i] = float.MinValue;
                 src.ReleaseTime[i] = float.MinValue;
-                src.HitVelocity[i] = byte.MaxValue;
+                src.HitVelocity[i] = byte.MaxValue / 2;
             }
 
             return src;

@@ -42,6 +42,7 @@ namespace FXG.CrimFan.Core
             match.TeamRight = Team.CreateObject(HorizontalDir.RIGHT, Color.blue, match);
             match.Keyboard = Keyboard.CreateObject(i_Config.KeyboardConfig, match);
             match.KeyboardInputHandler = KeyboardInputHandler.CreateComponent(match.Keyboard);
+            StaticGui.CreateObject(match);
             return match;
         }
 
